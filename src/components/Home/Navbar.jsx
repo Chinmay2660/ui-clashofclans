@@ -1,10 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Box, useColorModeValue } from '@chakra-ui/react';
+import { IconButton, Button, Box, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = (props) => {
+    const { toggleColorMode } = useColorMode();
     const navigate = useNavigate()
+    const iconColor = useColorModeValue('#111827', 'white');
     const bg = useColorModeValue('white', '#111827');
 
     const handleHome = () => {
@@ -39,6 +42,13 @@ const Navbar = (props) => {
             {/* <Button variant='ghost' mr='0.5rem' onClick={handleProfile}>Profile</Button>
             <Button variant='ghost' mr='0.5rem' onClick={handleSignIn}>Sign Up</Button>
             <Button variant='ghost' mr='0.5rem' onClick={handleLogIn}>Log in</Button> */}
+            {/* <IconButton
+                aria-label="Toggle dark mode"
+                icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
+                onClick={toggleColorMode}
+                color={iconColor}
+                variant="ghost"
+            /> */}
         </Box>
     );
 };
