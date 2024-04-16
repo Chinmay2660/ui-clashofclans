@@ -5,6 +5,12 @@ const config = {
     useSystemColorMode: false,
 }
 
-const theme = extendTheme({ config })
+const colors = {
+    dark: {
+        900: '#111827',
+    },
+}
+
+const theme = extendTheme({ config, colors })
 
 export default theme

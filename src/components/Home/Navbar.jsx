@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { IconButton, Text, Button, Box, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = (props) => {
     const { toggleColorMode } = useColorMode();
-    const iconColor = useColorModeValue('gray.600', 'gray.300');
+    const navigate = useNavigate()
+    const iconColor = useColorModeValue('#111827', 'white');
 
     const handleHome = () => {
-        console.log("test")
+        navigate('/')
     }
 
     const handleLowBatteryTeam = () => {
