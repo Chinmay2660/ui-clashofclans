@@ -27,13 +27,18 @@ const Navbar = (props) => {
         console.log("test")
     }
 
+    const handleLogIn = () => {
+        console.log("test")
+    }
+
     return (
         <Box style={{ padding: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <Button variant='ghost' mr='0.5rem' onClick={handleHome}>Home</Button>
             <Button variant='ghost' mr='0.5rem' onClick={handleLowBatteryTeam}>Low Battery Team</Button>
             <Button variant='ghost' mr='0.5rem' onClick={handleSearch}>Search</Button>
-            <Button variant='ghost' mr='0.5rem' onClick={handleProfile}>Profile</Button>
-            <Button variant='ghost' mr='0.5rem' onClick={handleSignIn}>Sign In</Button>
+            {/* <Button variant='ghost' mr='0.5rem' onClick={handleProfile}>Profile</Button>
+            <Button variant='ghost' mr='0.5rem' onClick={handleSignIn}>Sign Up</Button>
+            <Button variant='ghost' mr='0.5rem' onClick={handleLogIn}>Log in</Button> */}
             <IconButton
                 aria-label="Toggle dark mode"
                 icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
