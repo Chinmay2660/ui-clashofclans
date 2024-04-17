@@ -2,6 +2,7 @@ import { Box, useColorModeValue, Text, UnorderedList, ListItem } from '@chakra-u
 import wizardImg from '../../assets/backgroundPng/MagicWardenCropped.png'
 import hogRiderImg from '../../assets/backgroundPng/SuperHogRider.png'
 import { useNavigate } from 'react-router-dom';
+import { AiOutlineSearch } from 'react-icons/ai';
 
 const Home = () => {
     const bg = useColorModeValue('white', '#111827');
@@ -18,11 +19,19 @@ const Home = () => {
     return (
         <Box bg={bg} color="white" h="82.5vh" mt='5rem' >
             <Box h="30vh" pt='1rem' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Box h='23vh' w='75vh' mr='2rem' onClick={handlePlayerSearch} style={{ borderRadius: '1rem', cursor: 'pointer', backgroundImage: `url(${wizardImg})`, backgroundSize: '100%', backgroundPosition: '50% 50%', backgroundRepeat: 'no-repeat', backgroundColor: '#6420AA' }}>
-
+                <Box h='23vh' w='75vh' mr='2rem' onClick={handlePlayerSearch} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', borderRadius: '1rem', cursor: 'pointer', backgroundImage: `url(${wizardImg})`, backgroundSize: '100%', backgroundPosition: '10000% 50%', backgroundRepeat: 'no-repeat', backgroundColor: '#6420AA' }}>
+                    <Text ml='1rem' fontSize="lg" fontWeight="bold" mb="0.5rem">Search Player</Text>
+                    <div style={{ marginLeft: '1rem', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Text mb="1rem">Enter your player tag</Text>
+                        <AiOutlineSearch style={{ marginBottom: '0.8rem', marginLeft: '0.3rem' }} size={18} color="white" />
+                    </div>
                 </Box>
-                <Box h='23vh' w='75vh' ml='2rem' onClick={handleClanSearch} style={{ borderRadius: '1rem', cursor: 'pointer', backgroundImage: `url(${hogRiderImg})`, backgroundSize: '100%', backgroundPosition: '10% 10%', backgroundRepeat: 'no-repeat', backgroundColor: '#41B06E' }}>
-
+                <Box h='23vh' w='75vh' ml='2rem' onClick={handleClanSearch} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', borderRadius: '1rem', cursor: 'pointer', backgroundImage: `url(${hogRiderImg})`, backgroundSize: '100%', backgroundPosition: '-10000% 10%', backgroundRepeat: 'no-repeat', backgroundColor: '#41B06E' }}>
+                    <Text ml='1rem' fontSize="lg" fontWeight="bold" mb="0.5rem">Search Clan</Text>
+                    <div style={{ marginLeft: '1rem', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Text mb="1rem">Enter your clan tag</Text>
+                        <AiOutlineSearch style={{ marginBottom: '0.8rem', marginLeft: '0.3rem' }} size={18} color="white" />
+                    </div>
                 </Box>
             </Box>
             <Box h="50vh" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
