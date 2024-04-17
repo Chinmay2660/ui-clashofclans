@@ -36,7 +36,7 @@ const Navbar = (props) => {
     }
 
     return (
-        <Box bg={bg} style={{ position: 'sticky', borderBottom: '1px solid rgb(125 211 252)', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box bg={bg} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999, borderBottom: '2px solid rgb(125 211 252)', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <img src={COC_LOGO} style={{ height: '3rem', width: '7rem', marginRight: 'auto' }} alt='COC LOGO' />
             </div>

@@ -6,7 +6,7 @@ const Footer = (props) => {
     const bg = useColorModeValue('white', '#111827');
 
     return (
-        <Box bg={bg} style={{ position: 'sticky', borderTop: '1px solid rgb(125 211 252)', padding: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <Box bg={bg} style={{ borderTop: '2px solid rgb(125 211 252)', padding: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             twst
         </Box>
     );
