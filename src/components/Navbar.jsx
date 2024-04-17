@@ -16,11 +16,11 @@ const Navbar = (props) => {
     }
 
     const handleLowBatteryTeam = () => {
-        console.log("test")
+        navigate('/myteam')
     }
 
     const handleSearch = () => {
-        console.log("test")
+        navigate('/search')
     }
 
     const handleProfile = () => {
