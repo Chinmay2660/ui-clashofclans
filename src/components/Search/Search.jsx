@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import backImg from '../../assets/others/Halloween_2020.png';
-import { Box, useColorModeValue, Text, Flex, Input, Button, Switch } from '@chakra-ui/react';
+import { Box, useColorModeValue, Text, Flex, Input, Button, Switch, InputLeftElement, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setIsClanSearch } from '../../Store/Actions';
+import { MdTag } from 'react-icons/md';
 
 const Search = (props) => {
     const navigate = useNavigate();
@@ -41,14 +42,19 @@ const Search = (props) => {
                         <Switch colorScheme="blue" isChecked={!props.isClanSearch} onChange={() => props.setIsClanSearch(!props.isClanSearch)} size="md" />
                         <Text fontSize="md" ml="1rem">Player Tag</Text>
                     </Flex>
-                    <Text fontSize="md" ml="1rem">#</Text>
-                    <Input
-                        placeholder={props.isClanSearch ? "Search Clan" : "Search Player"}
-                        mb="1rem"
-                        borderRadius="full"
-                        size="md"
-                        w="70%"
-                    />
+                    <Flex justifyContent="center" alignItems="center" mb="1rem">
+                        <InputGroup w="80%">
+                            <InputLeftElement
+                                pointerEvents="none"
+                                children={<MdTag color="gray.300" />}
+                            />
+                            <Input
+                                placeholder={props.isClanSearch ? "Search Clan" : "Search Player"}
+                                borderRadius="full"
+                                size="md"
+                            />
+                        </InputGroup>
+                    </Flex>
                     <Button
                         colorScheme="blue"
                         onClick={handleSearch}
