@@ -1,7 +1,8 @@
 import * as types from "./types";
 
 const initialState = {
-    playerData: ''
+    playerData: '',
+    isClanSearch: true,
 }
 
 export const reducer = (state = initialState, action) => {
@@ -25,6 +26,11 @@ export const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 playerData: action.payload
+            };
+        case `${types.SET_CLAN_SEARCH}`:
+            return {
+                ...state,
+                isClanSearch: action.payload
             };
         default:
             return state;

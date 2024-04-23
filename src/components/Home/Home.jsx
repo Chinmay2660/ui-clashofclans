@@ -3,17 +3,21 @@ import wizardImg from '../../assets/backgroundPng/MagicWardenCropped.png'
 import hogRiderImg from '../../assets/backgroundPng/SuperHogRider.png'
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
+import { setIsClanSearch } from '../../Store/Actions';
+import { connect } from 'react-redux';
 
-const Home = () => {
+const Home = (props) => {
     const bg = useColorModeValue('white', '#111827');
     const navigate = useNavigate()
 
     const handlePlayerSearch = () => {
         navigate('/search')
+        props.setIsClanSearch(false)
     }
 
     const handleClanSearch = () => {
         navigate('/search')
+        props.setIsClanSearch(true)
     }
 
     return (
@@ -52,4 +56,13 @@ const Home = () => {
     );
 };
 
-export default Home;
+const mapStateToProps = (state) => ({
+    isClanSearch: state.isClanSearch
+});
+
+const mapDispatchToProps = {
+    setIsClanSearch
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
+
