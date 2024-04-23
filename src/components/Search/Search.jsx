@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import backImg from '../../assets/others/Halloween_2020.png';
 import { Box, useColorModeValue, Text, Flex, Input, Button, Switch, InputLeftElement, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getClanInfo, getPlayerInfo, setIsClanSearch } from '../../Store/Actions';
+import { getClanInfo, getPlayerInfo, hideLoader, setIsClanSearch, showLoader } from '../../Store/Actions';
 import { MdTag } from 'react-icons/md';
+import Loader from '../Loader'
 
 const Search = (props) => {
     const navigate = useNavigate();
@@ -15,10 +16,19 @@ const Search = (props) => {
 
     const handleSearch = () => {
         if (props.isClanSearch) {
-            props.getClanInfo(searchText)
+            props.showLoader()
+            props.getClanInfo(searchText);
+            props.hideLoader()
         } else {
-            props.getPlayerInfo(searchText)
+            props.showLoader()
+            props.getPlayerInfo(searchText);
+            props.hideLoader()
         }
+    };
+
+    const handleSwitch = () => {
+        props.setIsClanSearch(!props.isClanSearch);
+        setSearchText('');
     };
 
     return (
@@ -46,7 +56,7 @@ const Search = (props) => {
                     <Text fontSize="2xl" fontWeight="bold" mb="1rem">Welcome Chief!</Text>
                     <Flex align="center" justify="center" mb="1rem">
                         <Text fontSize="md" mr="1rem">Clan Tag</Text>
-                        <Switch colorScheme="blue" isChecked={!props.isClanSearch} onChange={() => props.setIsClanSearch(!props.isClanSearch)} size="md" />
+                        <Switch colorScheme="blue" isChecked={!props.isClanSearch} onChange={handleSwitch} size="md" />
                         <Text fontSize="md" ml="1rem">Player Tag</Text>
                     </Flex>
                     <Flex justifyContent="center" alignItems="center" mb="1rem">
@@ -59,6 +69,7 @@ const Search = (props) => {
                                 placeholder={props.isClanSearch ? "Search Clan" : "Search Player"}
                                 borderRadius="full"
                                 size="md"
+                                value={searchText}
                                 onChange={(e) => setSearchText(e.target.value)}
                             />
                         </InputGroup>
@@ -73,18 +84,22 @@ const Search = (props) => {
                     </Button>
                 </Box>
             </Box>
+            {props.loader ? <Loader /> : null}
         </>
     );
 };
 
 const mapStateToProps = (state) => ({
-    isClanSearch: state.isClanSearch
+    isClanSearch: state.isClanSearch,
+    loader: state.loader
 });
 
 const mapDispatchToProps = {
     setIsClanSearch,
     getPlayerInfo,
-    getClanInfo
+    getClanInfo,
+    showLoader,
+    hideLoader
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);

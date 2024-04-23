@@ -33,3 +33,13 @@ export const setIsClanSearch = (payload) => ({
     type: types.SET_CLAN_SEARCH,
     payload: payload,
 });
+
+export const showLoader = (payload) => ({
+    type: types.SHOW_LOADER,
+    payload
+});
+
+export const hideLoader = (payload) => ({
+    type: types.HIDE_LOADER,
+    payload
+});

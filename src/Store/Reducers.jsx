@@ -3,7 +3,8 @@ import * as types from "./types";
 const initialState = {
     playerData: '',
     isClanSearch: true,
-    clanData: ''
+    clanData: '',
+    loader: false,
 }
 
 export const reducer = (state = initialState, action) => {
@@ -42,6 +43,16 @@ export const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 isClanSearch: action.payload
+            };
+        case `${types.SHOW_LOADER}`:
+            return {
+                ...state,
+                loader: true
+            };
+        case `${types.HIDE_LOADER}`:
+            return {
+                ...state,
+                loader: false
             };
         default:
             return state;
