@@ -1,2 +1,3 @@
 export const GET_PLAYER_INFO = 'GET_PLAYER_INFO'
 export const SET_CLAN_SEARCH = 'SET_CLAN_SEARCH'
+export const GET_CLAN_INFO = 'GET_CLAN_INFO'

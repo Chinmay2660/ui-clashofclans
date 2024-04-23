@@ -3,19 +3,26 @@ import backImg from '../../assets/others/Halloween_2020.png';
 import { Box, useColorModeValue, Text, Flex, Input, Button, Switch, InputLeftElement, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { setIsClanSearch } from '../../Store/Actions';
+import { getClanInfo, getPlayerInfo, setIsClanSearch } from '../../Store/Actions';
 import { MdTag } from 'react-icons/md';
 
 const Search = (props) => {
     const navigate = useNavigate();
+    const [searchText, setSearchText] = useState('');
+
+    // use clan Tag = 2P9C9U9Y
+    // use player tag = 29PUGJQ9P
 
     const handleSearch = () => {
-
+        if (props.isClanSearch) {
+            props.getClanInfo(searchText)
+        } else {
+            props.getPlayerInfo(searchText)
+        }
     };
 
     return (
         <>
-            {console.log(props.isClanSearch, "test")}
             <Box position="relative" color="white" h="82.5vh" mt='5rem' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Box position="absolute" top={0} left={0} right={0} bottom={0} zIndex={-1} style={{
                     backgroundImage: `url(${backImg})`, backgroundSize: 'cover',
@@ -25,7 +32,7 @@ const Search = (props) => {
                 />
                 <Box
                     h="50vh"
-                    w="70vw"
+                    w="30vw"
                     borderRadius='1rem'
                     backgroundColor={useColorModeValue("white", "#1e293b")}
                     boxShadow="md"
@@ -52,6 +59,7 @@ const Search = (props) => {
                                 placeholder={props.isClanSearch ? "Search Clan" : "Search Player"}
                                 borderRadius="full"
                                 size="md"
+                                onChange={(e) => setSearchText(e.target.value)}
                             />
                         </InputGroup>
                     </Flex>
@@ -74,7 +82,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-    setIsClanSearch
+    setIsClanSearch,
+    getPlayerInfo,
+    getClanInfo
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);
