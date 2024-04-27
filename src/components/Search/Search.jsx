@@ -42,7 +42,7 @@ const Search = (props) => {
                 />
                 <Box
                     h="50vh"
-                    w="30vw"
+                    w={{base:'80vw', md:'40vw'}}
                     borderRadius='1rem'
                     backgroundColor={useColorModeValue("white", "#1e293b")}
                     boxShadow="md"
