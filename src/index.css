@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.navbar-button{
+  display: none;
+}
+
+.navbar-drawer-button{
+  display: block;
+}
+
+@media screen and (min-width : 768px) {
+  .navbar-button{
+    display: block;
+  }
+  .navbar-drawer-button{
+    display: none !important;
+  }
+}
