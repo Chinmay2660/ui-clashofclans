@@ -10,69 +10,123 @@ const WarEntry = memo(({ war, index }) => {
   const isWin = war.result === 'win';
   const isLoss = war.result === 'lose';
   const isDraw = war.result === 'tie';
+  const isUnknown = war.result === null;
   
-  const resultColor = isWin ? 'text-emerald-400' : isLoss ? 'text-red-400' : 'text-yellow-400';
-  const resultBg = isWin ? 'bg-emerald-500/20' : isLoss ? 'bg-red-500/20' : 'bg-yellow-500/20';
-  const resultBorder = '';
+  const resultColor = isWin ? 'text-emerald-400' : isLoss ? 'text-red-400' : isDraw ? 'text-yellow-400' : 'text-gray-400';
+  const resultBg = isWin ? 'bg-emerald-500/10' : isLoss ? 'bg-red-500/10' : isDraw ? 'bg-yellow-500/10' : 'bg-gray-500/10';
   
-  const ResultIcon = isWin ? HiShieldCheck : isLoss ? HiShieldExclamation : HiMinus;
+  const getResultLabel = () => {
+    if (isWin) return 'WIN';
+    if (isLoss) return 'LOSS';
+    if (isDraw) return 'DRAW';
+    return 'CWL';
+  };
+
+  const clanBadge = war.clan?.badgeUrls?.small || war.clan?.badgeUrls?.medium;
+  const opponentBadge = war.opponent?.badgeUrls?.small || war.opponent?.badgeUrls?.medium;
   
   return (
     <div 
       className={`p-3 sm:p-4 rounded-xl ${resultBg} transition-all hover:scale-[1.01]`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      <div className="flex items-center justify-between gap-3">
-        {/* Left side - Result & Opponent */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${resultBg} flex items-center justify-center shrink-0`}>
-            <ResultIcon className={resultColor} size={24} />
+      {/* Top row - Date & Result Badge */}
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-gray-500 text-xs">
+          {formatDate(war.endTime)}
+        </span>
+        <Badge 
+          variant={isWin ? 'success' : isLoss ? 'error' : isDraw ? 'warning' : 'outline'} 
+          className="text-xs uppercase font-bold"
+        >
+          {getResultLabel()}
+        </Badge>
+      </div>
+
+      {/* Main content - Clan vs Opponent with badges */}
+      <div className="flex items-center justify-between gap-2 sm:gap-4">
+        {/* Your Clan */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-dark-700/50 flex items-center justify-center shrink-0 overflow-hidden">
+            {clanBadge ? (
+              <img 
+                src={clanBadge} 
+                alt={war.clan?.name || 'Your Clan'} 
+                className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+              />
+            ) : (
+              <HiShieldCheck className="text-amber-400" size={20} />
+            )}
           </div>
-          
           <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge 
-                variant={isWin ? 'success' : isLoss ? 'error' : 'warning'} 
-                className="text-xs uppercase font-bold"
-              >
-                {war.result?.toUpperCase() || 'UNKNOWN'}
-              </Badge>
-              <span className="text-gray-500 text-xs hidden sm:inline">
-                {formatDate(war.endTime)}
-              </span>
-            </div>
-            <p className="text-white font-medium truncate text-sm sm:text-base mt-0.5">
-              vs {war.opponent?.name || 'Unknown Clan'}
+            <p className="text-white font-medium text-sm sm:text-base truncate">
+              {war.clan?.name || 'Your Clan'}
+            </p>
+            <p className="text-gray-500 text-xs">
+              Lvl {war.clan?.clanLevel || '?'}
             </p>
           </div>
         </div>
-        
-        {/* Right side - Stars */}
-        <div className="flex flex-col items-end gap-1 shrink-0">
-          <div className="flex items-center gap-1">
-            <span className="text-white font-bold text-lg sm:text-xl">
-              {war.clan?.stars || 0}
-            </span>
-            <HiStar className="text-yellow-400" size={18} />
-            <span className="text-gray-500 mx-1">-</span>
-            <span className="text-gray-400 font-bold text-lg sm:text-xl">
-              {war.opponent?.stars || 0}
-            </span>
-            <HiStar className="text-gray-500" size={18} />
+
+        {/* Score */}
+        <div className="flex flex-col items-center shrink-0 px-2 sm:px-4">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-0.5">
+              <span className={`font-bold text-lg sm:text-xl ${isWin ? 'text-emerald-400' : isLoss ? 'text-red-400' : 'text-white'}`}>
+                {war.clan?.stars || 0}
+              </span>
+              <HiStar className="text-yellow-400" size={16} />
+            </div>
+            <span className="text-gray-600 text-lg">-</span>
+            <div className="flex items-center gap-0.5">
+              <span className="text-gray-400 font-bold text-lg sm:text-xl">
+                {war.opponent?.stars || 0}
+              </span>
+              <HiStar className="text-gray-500" size={16} />
+            </div>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-[10px] sm:text-xs text-gray-500 mt-0.5">
             {war.teamSize}v{war.teamSize}
+          </div>
+        </div>
+
+        {/* Opponent */}
+        <div className="flex items-center gap-2 min-w-0 flex-1 justify-end">
+          <div className="min-w-0 text-right">
+            <p className="text-gray-300 font-medium text-sm sm:text-base truncate">
+              {war.opponent?.name || 'Unknown'}
+            </p>
+            <p className="text-gray-500 text-xs">
+              Lvl {war.opponent?.clanLevel || '?'}
+            </p>
+          </div>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-dark-700/50 flex items-center justify-center shrink-0 overflow-hidden">
+            {opponentBadge ? (
+              <img 
+                src={opponentBadge} 
+                alt={war.opponent?.name || 'Opponent'} 
+                className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+              />
+            ) : (
+              <HiShieldExclamation className="text-gray-500" size={20} />
+            )}
           </div>
         </div>
       </div>
       
       {/* Additional stats */}
-      <div className="mt-3 pt-3 border-t border-gray-700/50 flex justify-between text-xs text-gray-400">
-        <div className="flex gap-4">
-          <span>Destruction: <span className="text-white">{(war.clan?.destructionPercentage || 0).toFixed(1)}%</span></span>
-          <span className="hidden sm:inline">Attacks: <span className="text-white">{war.clan?.attacks || 0}</span></span>
+      <div className="mt-3 pt-3 border-t border-gray-700/30 flex justify-between text-xs text-gray-400">
+        <div className="flex gap-3 sm:gap-4">
+          <span>
+            <span className="text-gray-500">Destruction:</span> 
+            <span className="text-white ml-1">{(war.clan?.destructionPercentage || 0).toFixed(1)}%</span>
+            <span className="text-gray-600 mx-1">vs</span>
+            <span className="text-gray-400">{(war.opponent?.destructionPercentage || 0).toFixed(1)}%</span>
+          </span>
         </div>
-        <span className="sm:hidden text-gray-500">{formatDate(war.endTime)}</span>
+        <span className="hidden sm:inline text-gray-500">
+          Attacks: <span className="text-white">{war.clan?.attacks || 0}</span>
+        </span>
       </div>
     </div>
   );
@@ -85,15 +139,35 @@ const WarLogSkeleton = () => (
   <div className="space-y-3">
     {[...Array(5)].map((_, i) => (
       <div key={i} className="p-4 rounded-xl bg-dark-700/50">
+        {/* Top row */}
+        <div className="flex items-center justify-between mb-3">
+          <Skeleton type="text" className="w-24 h-3" />
+          <Skeleton type="text" className="w-12 h-5 rounded-full" />
+        </div>
+        {/* Main content - badges and scores */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Skeleton type="avatar" className="w-12 h-12" />
+            <Skeleton type="avatar" className="w-12 h-12 rounded-lg" />
             <div>
-              <Skeleton type="text" className="w-16 h-4 mb-1" />
-              <Skeleton type="text" className="w-32 h-5" />
+              <Skeleton type="text" className="w-24 h-4 mb-1" />
+              <Skeleton type="text" className="w-12 h-3" />
             </div>
           </div>
-          <Skeleton type="text" className="w-24 h-6" />
+          <div className="flex flex-col items-center">
+            <Skeleton type="text" className="w-20 h-6" />
+            <Skeleton type="text" className="w-10 h-3 mt-1" />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <Skeleton type="text" className="w-24 h-4 mb-1" />
+              <Skeleton type="text" className="w-12 h-3 ml-auto" />
+            </div>
+            <Skeleton type="avatar" className="w-12 h-12 rounded-lg" />
+          </div>
+        </div>
+        {/* Footer */}
+        <div className="mt-3 pt-3 border-t border-gray-700/30">
+          <Skeleton type="text" className="w-48 h-3" />
         </div>
       </div>
     ))}
