@@ -8,6 +8,7 @@ import {
   fetchCurrentWar,
   fetchCapitalRaidSeasons,
   fetchCWLGroup,
+  fetchCWLWar,
   selectCurrentPlayer,
   selectCurrentClan,
   selectPlayerLoading,
@@ -23,6 +24,7 @@ import {
   clearCurrentWar,
   clearCapitalRaids,
   clearCWL,
+  clearCWLWar,
   // Search
   selectSearchResults,
   selectSearchLoading,
@@ -43,16 +45,26 @@ import {
   selectCWLGroup,
   selectCWLLoading,
   selectCWLError,
+  // CWL War
+  selectCWLWar,
+  selectCWLWarLoading,
+  selectCWLWarError,
   // Rankings
   fetchLocations,
   fetchClanRankings,
   fetchPlayerRankings,
   fetchCapitalRankings,
+  fetchBuilderClanRankings,
+  fetchBuilderPlayerRankings,
+  setCurrentLocation,
+  clearRankings,
   selectLocations,
   selectLocationsLoading,
   selectClanRankings,
   selectPlayerRankings,
   selectCapitalRankings,
+  selectBuilderClanRankings,
+  selectBuilderPlayerRankings,
   selectRankingsLoading,
   selectRankingsError,
   selectCurrentLocationId,
@@ -269,6 +281,37 @@ export const useCWL = () => {
   };
 };
 
+// Custom hook for individual CWL war
+export const useCWLWar = () => {
+  const dispatch = useDispatch();
+  const cwlWar = useSelector(selectCWLWar);
+  const loading = useSelector(selectCWLWarLoading);
+  const error = useSelector(selectCWLWarError);
+
+  const getCWLWar = useCallback((warTag) => {
+    return dispatch(fetchCWLWar(warTag));
+  }, [dispatch]);
+
+  const clearCWLWarData = useCallback(() => {
+    dispatch(clearCWLWar());
+  }, [dispatch]);
+
+  return {
+    cwlWar,
+    loading,
+    error,
+    getCWLWar,
+    clearCWLWarData,
+    hasData: cwlWar && cwlWar.clan && cwlWar.opponent,
+    state: cwlWar?.state,
+    clan: cwlWar?.clan,
+    opponent: cwlWar?.opponent,
+    teamSize: cwlWar?.teamSize,
+    startTime: cwlWar?.startTime,
+    endTime: cwlWar?.endTime,
+  };
+};
+
 // Custom hook for search mode
 export const useSearchMode = () => {
   const dispatch = useDispatch();
@@ -303,6 +346,8 @@ export const useRankings = () => {
   const clanRankings = useSelector(selectClanRankings);
   const playerRankings = useSelector(selectPlayerRankings);
   const capitalRankings = useSelector(selectCapitalRankings);
+  const builderClanRankings = useSelector(selectBuilderClanRankings);
+  const builderPlayerRankings = useSelector(selectBuilderPlayerRankings);
   const loading = useSelector(selectRankingsLoading);
   const error = useSelector(selectRankingsError);
   const currentLocationId = useSelector(selectCurrentLocationId);
@@ -311,31 +356,58 @@ export const useRankings = () => {
     return dispatch(fetchLocations());
   }, [dispatch]);
 
-  const getClanRankings = useCallback((locationId, limit = 100) => {
+  const getClanRankings = useCallback((locationId = 'global', limit = 200) => {
     return dispatch(fetchClanRankings({ locationId, limit }));
   }, [dispatch]);
 
-  const getPlayerRankings = useCallback((locationId, limit = 100) => {
+  const getPlayerRankings = useCallback((locationId = 'global', limit = 200) => {
     return dispatch(fetchPlayerRankings({ locationId, limit }));
   }, [dispatch]);
 
-  const getCapitalRankings = useCallback((locationId, limit = 100) => {
+  const getCapitalRankings = useCallback((locationId = 'global', limit = 200) => {
     return dispatch(fetchCapitalRankings({ locationId, limit }));
   }, [dispatch]);
 
+  const getBuilderClanRankings = useCallback((locationId = 'global', limit = 200) => {
+    return dispatch(fetchBuilderClanRankings({ locationId, limit }));
+  }, [dispatch]);
+
+  const getBuilderPlayerRankings = useCallback((locationId = 'global', limit = 200) => {
+    return dispatch(fetchBuilderPlayerRankings({ locationId, limit }));
+  }, [dispatch]);
+
+  const setLocation = useCallback((locationId) => {
+    dispatch(setCurrentLocation(locationId));
+  }, [dispatch]);
+
+  const clear = useCallback(() => {
+    dispatch(clearRankings());
+  }, [dispatch]);
+
   return {
+    // Data
     locations,
     locationsLoading,
     clanRankings,
     playerRankings,
     capitalRankings,
+    builderClanRankings,
+    builderPlayerRankings,
     loading,
     error,
     currentLocationId,
+    // Actions
     getLocations,
     getClanRankings,
     getPlayerRankings,
     getCapitalRankings,
+    getBuilderClanRankings,
+    getBuilderPlayerRankings,
+    setLocation,
+    clear,
+    // Helpers
+    hasPlayerRankings: playerRankings && playerRankings.length > 0,
+    hasClanRankings: clanRankings && clanRankings.length > 0,
   };
 };
 
@@ -408,7 +480,7 @@ export const useGoldPass = () => {
   };
 };
 
-// Custom hook for fetching ALL clan data in parallel (clan details + war log + current war + capital raids)
+// Custom hook for fetching ALL clan data in parallel (clan details + war log + current war + capital raids + CWL)
 export const useClanWithDetails = () => {
   const dispatch = useDispatch();
   
@@ -431,6 +503,11 @@ export const useClanWithDetails = () => {
   const capitalRaidSeasons = useSelector(selectCapitalRaidSeasons);
   const capitalRaidLoading = useSelector(selectCapitalRaidLoading);
   const capitalRaidError = useSelector(selectCapitalRaidError);
+  
+  // CWL
+  const cwlGroup = useSelector(selectCWLGroup);
+  const cwlLoading = useSelector(selectCWLLoading);
+  const cwlError = useSelector(selectCWLError);
 
   // Fetch all data in parallel
   const fetchAllClanData = useCallback((tag) => {
@@ -442,6 +519,7 @@ export const useClanWithDetails = () => {
       dispatch(fetchWarLog(cleanTag)),
       dispatch(fetchCurrentWar(cleanTag)),
       dispatch(fetchCapitalRaidSeasons(cleanTag)),
+      dispatch(fetchCWLGroup(cleanTag)),
     ]);
   }, [dispatch]);
 
@@ -451,10 +529,11 @@ export const useClanWithDetails = () => {
     dispatch(clearWarLog());
     dispatch(clearCurrentWar());
     dispatch(clearCapitalRaids());
+    dispatch(clearCWL());
   }, [dispatch]);
 
   // Combined loading state - true if ANY request is still loading
-  const isLoading = clanLoading || warLogLoading || currentWarLoading || capitalRaidLoading;
+  const isLoading = clanLoading || warLogLoading || currentWarLoading || capitalRaidLoading || cwlLoading;
   
   // Initial loading - only clan is loading (for skeleton)
   const isInitialLoading = clanLoading;
@@ -486,6 +565,15 @@ export const useClanWithDetails = () => {
     capitalRaidLoading,
     capitalRaidError,
     hasRaids: capitalRaidSeasons && capitalRaidSeasons.items && capitalRaidSeasons.items.length > 0,
+    
+    // CWL
+    cwlGroup,
+    cwlClans: cwlGroup?.clans || [],
+    cwlRounds: cwlGroup?.rounds || [],
+    cwlLoading,
+    cwlError,
+    hasCWL: cwlGroup && cwlGroup.clans && cwlGroup.clans.length > 0,
+    cwlSeason: cwlGroup?.season,
     
     // Combined states
     isLoading,

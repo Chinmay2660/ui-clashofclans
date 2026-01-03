@@ -27,7 +27,7 @@ const WarEntry = memo(({ war, index }) => {
   
   return (
     <div 
-      className={`p-3 sm:p-4 rounded-xl ${resultBg} transition-all hover:scale-[1.01]`}
+      className={`p-3 sm:p-4 rounded-xl ${resultBg} transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] group`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Top row - Date & Result Badge */}
@@ -47,7 +47,7 @@ const WarEntry = memo(({ war, index }) => {
       <div className="flex items-center justify-between gap-2 sm:gap-4">
         {/* Your Clan */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-dark-700/50 flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-dark-700/50 flex items-center justify-center shrink-0 overflow-hidden transition-transform group-hover:scale-105">
             {clanBadge ? (
               <img 
                 src={clanBadge} 
@@ -59,7 +59,7 @@ const WarEntry = memo(({ war, index }) => {
             )}
           </div>
           <div className="min-w-0">
-            <p className="text-white font-medium text-sm sm:text-base truncate">
+            <p className="text-white font-medium text-sm sm:text-base truncate group-hover:text-amber-400 transition-colors">
               {war.clan?.name || 'Your Clan'}
             </p>
             <p className="text-gray-500 text-xs">
@@ -100,7 +100,7 @@ const WarEntry = memo(({ war, index }) => {
               Lvl {war.opponent?.clanLevel || '?'}
             </p>
           </div>
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-dark-700/50 flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-dark-700/50 flex items-center justify-center shrink-0 overflow-hidden transition-transform group-hover:scale-105">
             {opponentBadge ? (
               <img 
                 src={opponentBadge} 

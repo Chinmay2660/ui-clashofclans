@@ -7,6 +7,7 @@ import {
   GET_CLAN_CURRENT_WAR_INFO,
   GET_CLAN_CAPITAL_RAID_SEASONS_INFO,
   GET_CLAN_CURRENT_WAR_LEAGUE_GROUP_INFO,
+  GET_CLAN_WAR_LEAGUE_INDIVIDUAL_WAR_INFO,
 } from '../../Config/Config';
 
 // Async thunk for fetching clan data
@@ -118,6 +119,23 @@ export const fetchCWLGroup = createAsyncThunk(
   }
 );
 
+// Async thunk for fetching individual CWL war
+export const fetchCWLWar = createAsyncThunk(
+  'clan/fetchCWLWar',
+  async (warTag, { rejectWithValue }) => {
+    try {
+      const cleanTag = warTag.replace('#', '');
+      const response = await axios.get(`${GET_CLAN_WAR_LEAGUE_INDIVIDUAL_WAR_INFO}?warTag=${cleanTag}`);
+      return response.data;
+    } catch (error) {
+      if (error.response?.data) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({ error: true, message: error.message });
+    }
+  }
+);
+
 const initialState = {
   // Current clan being viewed
   currentClan: null,
@@ -141,6 +159,10 @@ const initialState = {
   cwlGroup: null,
   cwlLoading: false,
   cwlError: null,
+  // CWL Individual War
+  cwlWar: null,
+  cwlWarLoading: false,
+  cwlWarError: null,
   // Loading states
   loading: false,
   // Error states
@@ -174,6 +196,10 @@ const clanSlice = createSlice({
     clearCWL: (state) => {
       state.cwlGroup = null;
       state.cwlError = null;
+    },
+    clearCWLWar: (state) => {
+      state.cwlWar = null;
+      state.cwlWarError = null;
     },
     clearError: (state) => {
       state.error = null;
@@ -270,6 +296,21 @@ const clanSlice = createSlice({
         state.cwlLoading = false;
         state.cwlError = action.payload || { error: true, message: 'CWL info unavailable' };
         state.cwlGroup = null;
+      })
+      // Fetch CWL individual war
+      .addCase(fetchCWLWar.pending, (state) => {
+        state.cwlWarLoading = true;
+        state.cwlWarError = null;
+      })
+      .addCase(fetchCWLWar.fulfilled, (state, action) => {
+        state.cwlWarLoading = false;
+        state.cwlWar = action.payload;
+        state.cwlWarError = null;
+      })
+      .addCase(fetchCWLWar.rejected, (state, action) => {
+        state.cwlWarLoading = false;
+        state.cwlWarError = action.payload || { error: true, message: 'CWL war info unavailable' };
+        state.cwlWar = null;
       });
   },
 });
@@ -281,6 +322,7 @@ export const {
   clearCurrentWar, 
   clearCapitalRaids,
   clearCWL,
+  clearCWLWar,
   clearError 
 } = clanSlice.actions;
 
@@ -308,5 +350,9 @@ export const selectCapitalRaidError = (state) => state.clan.capitalRaidError;
 export const selectCWLGroup = (state) => state.clan.cwlGroup;
 export const selectCWLLoading = (state) => state.clan.cwlLoading;
 export const selectCWLError = (state) => state.clan.cwlError;
+// CWL War selectors
+export const selectCWLWar = (state) => state.clan.cwlWar;
+export const selectCWLWarLoading = (state) => state.clan.cwlWarLoading;
+export const selectCWLWarError = (state) => state.clan.cwlWarError;
 
 export default clanSlice.reducer;

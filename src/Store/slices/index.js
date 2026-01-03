@@ -24,12 +24,14 @@ export {
   fetchCurrentWar,
   fetchCapitalRaidSeasons,
   fetchCWLGroup,
+  fetchCWLWar,
   clearCurrentClan,
   clearSearchResults,
   clearWarLog,
   clearCurrentWar,
   clearCapitalRaids,
   clearCWL,
+  clearCWLWar,
   clearError as clearClanError,
   selectCurrentClan,
   selectClanLoading,
@@ -54,6 +56,10 @@ export {
   selectCWLGroup,
   selectCWLLoading,
   selectCWLError,
+  // CWL War
+  selectCWLWar,
+  selectCWLWarLoading,
+  selectCWLWarError,
 } from './clanSlice';
 
 // ========== UI EXPORTS ==========

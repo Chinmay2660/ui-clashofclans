@@ -1,7 +1,7 @@
 import { memo, useMemo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HiStar, HiTrendingUp, HiShieldCheck, HiLightningBolt, HiExternalLink, HiChevronDown, HiChevronUp, HiHome, HiOfficeBuilding, HiSparkles, HiCube, HiHeart, HiCollection } from 'react-icons/hi';
-import { GiSwordClash, GiShield, GiTwoCoins, GiHealthPotion, GiSkeletonKey, GiCastle, GiCrossedSwords } from 'react-icons/gi';
+import { GiSwordClash, GiShield, GiTwoCoins, GiHealthPotion, GiSkeletonKey, GiCastle, GiCrossedSwords, GiHammerNails } from 'react-icons/gi';
 import { Card, Badge, StatCard } from '../ui';
 import { formatNumber } from '../../utils';
 
@@ -295,14 +295,25 @@ const PlayerHeader = memo(({ player, townHallImg, actions, onClanClick }) => (
             </Badge>
           </button>
         )}
+        {/* League Tier (Primary - New Ranking System) */}
+        {player.leagueTier && (
+          <Badge 
+            variant="gold"
+            icon={player.leagueTier.iconUrls?.small} 
+            className="text-xs md:text-sm"
+          >
+            {player.leagueTier.name}
+          </Badge>
+        )}
+        {/* Regular League (Secondary) */}
         {player.league && (
           <Badge variant="outline" icon={player.league.iconUrls?.tiny} className="text-xs md:text-sm">
             {player.league.name}
           </Badge>
         )}
-        {player.leagueTier && player.leagueTier.name !== 'Unranked' && (
-          <Badge variant="gold" icon={player.leagueTier.iconUrls?.small} className="text-xs md:text-sm">
-            {player.leagueTier.name}
+        {player.builderBaseLeague && (
+          <Badge variant="blue" className="text-xs md:text-sm">
+            BB: {player.builderBaseLeague.name}
           </Badge>
         )}
       </div>
@@ -357,6 +368,80 @@ const PlayerHeader = memo(({ player, townHallImg, actions, onClanClick }) => (
 ));
 
 PlayerHeader.displayName = 'PlayerHeader';
+
+// Leagues & Rankings Section - League Tier is PRIMARY (new ranking system)
+const LeagueStats = memo(({ player }) => {
+  const hasAnyLeague = player.league || player.leagueTier || player.builderBaseLeague;
+  if (!hasAnyLeague) return null;
+  
+  return (
+    <div className="mb-6 md:mb-8">
+      <h2 className="text-base md:text-xl font-semibold text-white mb-3 md:mb-4 flex items-center gap-2">
+        <span className="w-1 h-5 md:h-6 bg-amber-500 rounded-full" />
+        Leagues & Rankings
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {/* League Tier (PRIMARY - New Ranking System) - Shown First */}
+        {player.leagueTier && (
+          <div className="bg-gradient-to-br from-amber-500/10 to-yellow-600/10 border border-amber-500/20 rounded-xl p-4 flex items-center gap-4">
+            {player.leagueTier.iconUrls?.large ? (
+              <img 
+                src={player.leagueTier.iconUrls.large} 
+                alt={player.leagueTier.name} 
+                className="w-14 h-14 md:w-16 md:h-16"
+              />
+            ) : (
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-amber-500/20 to-yellow-600/20 flex items-center justify-center">
+                <HiStar className="text-amber-400" size={28} />
+              </div>
+            )}
+            <div>
+              <p className="text-[10px] md:text-xs text-amber-400 uppercase tracking-wide font-semibold">League Tier ★</p>
+              <p className={`text-base md:text-lg font-bold ${player.leagueTier.name === 'Unranked' ? 'text-gray-400' : 'text-amber-400'}`}>
+                {player.leagueTier.name}
+              </p>
+              <p className="text-xs text-amber-400/60">{player.trophies?.toLocaleString() || 0} trophies</p>
+            </div>
+          </div>
+        )}
+
+        {/* Home Village League (Secondary) */}
+        {player.league && (
+          <div className="bg-dark-800/50 rounded-xl p-4 flex items-center gap-4">
+            {player.league.iconUrls?.medium && (
+              <img 
+                src={player.league.iconUrls.medium} 
+                alt={player.league.name} 
+                className="w-14 h-14 md:w-16 md:h-16"
+              />
+            )}
+            <div>
+              <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wide">Home League</p>
+              <p className="text-base md:text-lg font-bold text-white">{player.league.name}</p>
+              <p className="text-xs text-gray-500">Classic League</p>
+            </div>
+          </div>
+        )}
+        
+        {/* Builder Base League */}
+        {player.builderBaseLeague && (
+          <div className="bg-dark-800/50 rounded-xl p-4 flex items-center gap-4">
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center">
+              <GiHammerNails className="text-cyan-400" size={28} />
+            </div>
+            <div>
+              <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wide">Builder Base</p>
+              <p className="text-base md:text-lg font-bold text-cyan-400">{player.builderBaseLeague.name}</p>
+              <p className="text-xs text-cyan-400/60">{player.builderBaseTrophies?.toLocaleString() || 0} trophies</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+
+LeagueStats.displayName = 'LeagueStats';
 
 // Battle Statistics Section
 const BattleStats = memo(({ player }) => (
@@ -862,9 +947,10 @@ const PlayerProfile = memo(({
 
       {/* Content Section */}
       <section className="max-w-6xl mx-auto px-4 py-6 md:py-8">
-        {/* Battle & Donation Stats */}
+        {/* Leagues, Battle & Donation Stats */}
         {showStats && (
           <>
+            <LeagueStats player={player} />
             <BattleStats player={player} />
             <DonationStats player={player} />
           </>

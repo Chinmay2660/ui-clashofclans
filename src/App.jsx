@@ -13,6 +13,7 @@ const MyProfile = lazy(() => import('./components/MyProfile/MyProfile'));
 const PlayerDetails = lazy(() => import('./components/Player/PlayerDetails'));
 const ClanDetails = lazy(() => import('./components/Clan/ClanDetails'));
 const Settings = lazy(() => import('./components/Settings/Settings'));
+const Leaderboards = lazy(() => import('./components/Leaderboards/Leaderboards'));
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/search" element={<Search />} />
+              <Route path="/leaderboards" element={<Leaderboards />} />
               <Route path="/myclan" element={<MyClan />} />
               <Route path="/profile" element={<MyProfile />} />
               <Route path="/player/:playerTag" element={<PlayerDetails />} />

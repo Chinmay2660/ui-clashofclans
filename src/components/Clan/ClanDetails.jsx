@@ -2,7 +2,7 @@ import { useEffect, memo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ErrorState, RefreshButton, BackButton, HeaderActions, PageWrapper } from '../ui';
 import { ClanProfile } from '../shared';
-import { WarLog, CurrentWar, CapitalRaids } from './';
+import { WarLog, CurrentWar, CapitalRaids, CurrentCWL } from './';
 import Loader from '../Loader';
 import SEO from '../SEO';
 import { useClanWithDetails } from '../../Store/hooks';
@@ -97,6 +97,9 @@ const ClanDetails = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-6">
           {/* Current War Status */}
           <CurrentWar clanTag={clanTag} showTitle={true} skipFetch={true} />
+          
+          {/* Clan War League (Current Season) */}
+          <CurrentCWL clanTag={clanTag} showTitle={true} skipFetch={true} />
           
           {/* Capital Raid Weekends */}
           <CapitalRaids clanTag={clanTag} showTitle={true} limit={5} skipFetch={true} />

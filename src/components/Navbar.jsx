@@ -1,6 +1,6 @@
 import { useState, useCallback, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { HiMenu, HiX, HiHome, HiSearch, HiUsers, HiUser, HiCog } from 'react-icons/hi';
+import { HiMenu, HiX, HiHome, HiSearch, HiUsers, HiUser, HiCog, HiChartBar } from 'react-icons/hi';
 import { Button } from './ui';
 import cocLogo from '../assets/others/COC_LOGO.png';
 
@@ -36,6 +36,7 @@ const Navbar = () => {
   const navLinks = [
     { path: '/', label: 'Home', icon: HiHome },
     { path: '/search', label: 'Search', icon: HiSearch },
+    { path: '/leaderboards', label: 'Leaderboards', icon: HiChartBar },
     { path: '/profile', label: 'My Profile', icon: HiUser },
     { path: '/myclan', label: 'My Clan', icon: HiUsers },
     { path: '/settings', label: 'Settings', icon: HiCog },

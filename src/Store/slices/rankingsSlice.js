@@ -4,9 +4,9 @@ import {
   GET_LOCATIONS,
   GET_CLAN_RANKINGS,
   GET_PLAYER_RANKINGS,
-  GET_CAPITAL_RANKINGS,
   GET_CLAN_BUILDER_RANKINGS,
   GET_PLAYER_BUILDER_RANKINGS,
+  GET_CAPITAL_RANKINGS,
 } from '../../Config/Config';
 
 // ========== ASYNC THUNKS ==========
@@ -16,104 +16,118 @@ export const fetchLocations = createAsyncThunk(
   'rankings/fetchLocations',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${GET_LOCATIONS}?limit=100`);
+      const response = await axios.get(GET_LOCATIONS);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { error: true, message: error.message });
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
-// Fetch clan rankings for a location
-export const fetchClanRankings = createAsyncThunk(
-  'rankings/fetchClanRankings',
-  async ({ locationId, limit = 100 }, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${GET_CLAN_RANKINGS(locationId)}?limit=${limit}`);
-      return { locationId, data: response.data };
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { error: true, message: error.message });
-    }
-  }
-);
-
-// Fetch player rankings for a location
+// Fetch player rankings
 export const fetchPlayerRankings = createAsyncThunk(
   'rankings/fetchPlayerRankings',
-  async ({ locationId, limit = 100 }, { rejectWithValue }) => {
+  async ({ locationId = 'global', limit = 200 }, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${GET_PLAYER_RANKINGS(locationId)}?limit=${limit}`);
-      return { locationId, data: response.data };
+      return { data: response.data, locationId };
     } catch (error) {
-      return rejectWithValue(error.response?.data || { error: true, message: error.message });
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
-// Fetch capital rankings for a location
-export const fetchCapitalRankings = createAsyncThunk(
-  'rankings/fetchCapitalRankings',
-  async ({ locationId, limit = 100 }, { rejectWithValue }) => {
+// Fetch clan rankings
+export const fetchClanRankings = createAsyncThunk(
+  'rankings/fetchClanRankings',
+  async ({ locationId = 'global', limit = 200 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${GET_CAPITAL_RANKINGS(locationId)}?limit=${limit}`);
-      return { locationId, data: response.data };
+      const response = await axios.get(`${GET_CLAN_RANKINGS(locationId)}?limit=${limit}`);
+      return { data: response.data, locationId };
     } catch (error) {
-      return rejectWithValue(error.response?.data || { error: true, message: error.message });
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
-// Fetch builder base clan rankings
-export const fetchBuilderClanRankings = createAsyncThunk(
-  'rankings/fetchBuilderClanRankings',
-  async ({ locationId, limit = 100 }, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${GET_CLAN_BUILDER_RANKINGS(locationId)}?limit=${limit}`);
-      return { locationId, data: response.data };
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { error: true, message: error.message });
-    }
-  }
-);
-
-// Fetch builder base player rankings
+// Fetch player builder base rankings
 export const fetchBuilderPlayerRankings = createAsyncThunk(
   'rankings/fetchBuilderPlayerRankings',
-  async ({ locationId, limit = 100 }, { rejectWithValue }) => {
+  async ({ locationId = 'global', limit = 200 }, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${GET_PLAYER_BUILDER_RANKINGS(locationId)}?limit=${limit}`);
-      return { locationId, data: response.data };
+      return { data: response.data, locationId };
     } catch (error) {
-      return rejectWithValue(error.response?.data || { error: true, message: error.message });
+      return rejectWithValue(error.response?.data || { message: error.message });
+    }
+  }
+);
+
+// Fetch clan builder base rankings
+export const fetchBuilderClanRankings = createAsyncThunk(
+  'rankings/fetchBuilderClanRankings',
+  async ({ locationId = 'global', limit = 200 }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${GET_CLAN_BUILDER_RANKINGS(locationId)}?limit=${limit}`);
+      return { data: response.data, locationId };
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: error.message });
+    }
+  }
+);
+
+// Fetch capital rankings
+export const fetchCapitalRankings = createAsyncThunk(
+  'rankings/fetchCapitalRankings',
+  async ({ locationId = 'global', limit = 200 }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${GET_CAPITAL_RANKINGS(locationId)}?limit=${limit}`);
+      return { data: response.data, locationId };
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
 // ========== INITIAL STATE ==========
-
 const initialState = {
-  // Locations list
-  locations: null,
+  // Locations
+  locations: [],
   locationsLoading: false,
   locationsError: null,
-
-  // Current rankings data
-  clanRankings: null,
-  playerRankings: null,
-  capitalRankings: null,
-  builderClanRankings: null,
-  builderPlayerRankings: null,
-
-  // Current location for rankings
-  currentLocationId: null,
-
-  // Loading states
+  currentLocationId: 'global',
+  
+  // Player Rankings (Trophies)
+  playerRankings: [],
+  playerRankingsLoading: false,
+  playerRankingsError: null,
+  
+  // Clan Rankings (Trophies)
+  clanRankings: [],
+  clanRankingsLoading: false,
+  clanRankingsError: null,
+  
+  // Player Builder Base Rankings
+  builderPlayerRankings: [],
+  builderPlayerRankingsLoading: false,
+  builderPlayerRankingsError: null,
+  
+  // Clan Builder Base Rankings
+  builderClanRankings: [],
+  builderClanRankingsLoading: false,
+  builderClanRankingsError: null,
+  
+  // Capital Rankings
+  capitalRankings: [],
+  capitalRankingsLoading: false,
+  capitalRankingsError: null,
+  
+  // General loading/error
   loading: false,
   error: null,
 };
 
 // ========== SLICE ==========
-
 const rankingsSlice = createSlice({
   name: 'rankings',
   initialState,
@@ -122,120 +136,144 @@ const rankingsSlice = createSlice({
       state.currentLocationId = action.payload;
     },
     clearRankings: (state) => {
-      state.clanRankings = null;
-      state.playerRankings = null;
-      state.capitalRankings = null;
-      state.builderClanRankings = null;
-      state.builderPlayerRankings = null;
+      state.playerRankings = [];
+      state.clanRankings = [];
+      state.builderPlayerRankings = [];
+      state.builderClanRankings = [];
+      state.capitalRankings = [];
       state.error = null;
     },
   },
   extraReducers: (builder) => {
+    // Locations
     builder
-      // Locations
       .addCase(fetchLocations.pending, (state) => {
         state.locationsLoading = true;
         state.locationsError = null;
       })
       .addCase(fetchLocations.fulfilled, (state, action) => {
         state.locationsLoading = false;
-        state.locations = action.payload;
+        state.locations = action.payload.items || action.payload || [];
       })
       .addCase(fetchLocations.rejected, (state, action) => {
         state.locationsLoading = false;
         state.locationsError = action.payload;
-      })
+      });
 
-      // Clan Rankings
-      .addCase(fetchClanRankings.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchClanRankings.fulfilled, (state, action) => {
-        state.loading = false;
-        state.clanRankings = action.payload.data;
-        state.currentLocationId = action.payload.locationId;
-      })
-      .addCase(fetchClanRankings.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // Player Rankings
+    // Player Rankings
+    builder
       .addCase(fetchPlayerRankings.pending, (state) => {
+        state.playerRankingsLoading = true;
         state.loading = true;
-        state.error = null;
+        state.playerRankingsError = null;
       })
       .addCase(fetchPlayerRankings.fulfilled, (state, action) => {
+        state.playerRankingsLoading = false;
         state.loading = false;
-        state.playerRankings = action.payload.data;
+        state.playerRankings = action.payload.data.items || action.payload.data || [];
         state.currentLocationId = action.payload.locationId;
       })
       .addCase(fetchPlayerRankings.rejected, (state, action) => {
+        state.playerRankingsLoading = false;
         state.loading = false;
+        state.playerRankingsError = action.payload;
         state.error = action.payload;
-      })
+      });
 
-      // Capital Rankings
-      .addCase(fetchCapitalRankings.pending, (state) => {
+    // Clan Rankings
+    builder
+      .addCase(fetchClanRankings.pending, (state) => {
+        state.clanRankingsLoading = true;
         state.loading = true;
-        state.error = null;
+        state.clanRankingsError = null;
       })
-      .addCase(fetchCapitalRankings.fulfilled, (state, action) => {
+      .addCase(fetchClanRankings.fulfilled, (state, action) => {
+        state.clanRankingsLoading = false;
         state.loading = false;
-        state.capitalRankings = action.payload.data;
+        state.clanRankings = action.payload.data.items || action.payload.data || [];
         state.currentLocationId = action.payload.locationId;
       })
-      .addCase(fetchCapitalRankings.rejected, (state, action) => {
+      .addCase(fetchClanRankings.rejected, (state, action) => {
+        state.clanRankingsLoading = false;
         state.loading = false;
+        state.clanRankingsError = action.payload;
         state.error = action.payload;
-      })
+      });
 
-      // Builder Clan Rankings
-      .addCase(fetchBuilderClanRankings.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchBuilderClanRankings.fulfilled, (state, action) => {
-        state.loading = false;
-        state.builderClanRankings = action.payload.data;
-        state.currentLocationId = action.payload.locationId;
-      })
-      .addCase(fetchBuilderClanRankings.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // Builder Player Rankings
+    // Builder Player Rankings
+    builder
       .addCase(fetchBuilderPlayerRankings.pending, (state) => {
+        state.builderPlayerRankingsLoading = true;
         state.loading = true;
-        state.error = null;
+        state.builderPlayerRankingsError = null;
       })
       .addCase(fetchBuilderPlayerRankings.fulfilled, (state, action) => {
+        state.builderPlayerRankingsLoading = false;
         state.loading = false;
-        state.builderPlayerRankings = action.payload.data;
-        state.currentLocationId = action.payload.locationId;
+        state.builderPlayerRankings = action.payload.data.items || action.payload.data || [];
       })
       .addCase(fetchBuilderPlayerRankings.rejected, (state, action) => {
+        state.builderPlayerRankingsLoading = false;
         state.loading = false;
+        state.builderPlayerRankingsError = action.payload;
+        state.error = action.payload;
+      });
+
+    // Builder Clan Rankings
+    builder
+      .addCase(fetchBuilderClanRankings.pending, (state) => {
+        state.builderClanRankingsLoading = true;
+        state.loading = true;
+        state.builderClanRankingsError = null;
+      })
+      .addCase(fetchBuilderClanRankings.fulfilled, (state, action) => {
+        state.builderClanRankingsLoading = false;
+        state.loading = false;
+        state.builderClanRankings = action.payload.data.items || action.payload.data || [];
+      })
+      .addCase(fetchBuilderClanRankings.rejected, (state, action) => {
+        state.builderClanRankingsLoading = false;
+        state.loading = false;
+        state.builderClanRankingsError = action.payload;
+        state.error = action.payload;
+      });
+
+    // Capital Rankings
+    builder
+      .addCase(fetchCapitalRankings.pending, (state) => {
+        state.capitalRankingsLoading = true;
+        state.loading = true;
+        state.capitalRankingsError = null;
+      })
+      .addCase(fetchCapitalRankings.fulfilled, (state, action) => {
+        state.capitalRankingsLoading = false;
+        state.loading = false;
+        state.capitalRankings = action.payload.data.items || action.payload.data || [];
+      })
+      .addCase(fetchCapitalRankings.rejected, (state, action) => {
+        state.capitalRankingsLoading = false;
+        state.loading = false;
+        state.capitalRankingsError = action.payload;
         state.error = action.payload;
       });
   },
 });
 
+// ========== EXPORTS ==========
 export const { setCurrentLocation, clearRankings } = rankingsSlice.actions;
 
-// ========== SELECTORS ==========
+// Selectors
 export const selectLocations = (state) => state.rankings.locations;
 export const selectLocationsLoading = (state) => state.rankings.locationsLoading;
-export const selectClanRankings = (state) => state.rankings.clanRankings;
-export const selectPlayerRankings = (state) => state.rankings.playerRankings;
-export const selectCapitalRankings = (state) => state.rankings.capitalRankings;
-export const selectBuilderClanRankings = (state) => state.rankings.builderClanRankings;
-export const selectBuilderPlayerRankings = (state) => state.rankings.builderPlayerRankings;
-export const selectRankingsLoading = (state) => state.rankings.loading;
-export const selectRankingsError = (state) => state.rankings.error;
 export const selectCurrentLocationId = (state) => state.rankings.currentLocationId;
 
-export default rankingsSlice.reducer;
+export const selectPlayerRankings = (state) => state.rankings.playerRankings;
+export const selectClanRankings = (state) => state.rankings.clanRankings;
+export const selectBuilderPlayerRankings = (state) => state.rankings.builderPlayerRankings;
+export const selectBuilderClanRankings = (state) => state.rankings.builderClanRankings;
+export const selectCapitalRankings = (state) => state.rankings.capitalRankings;
 
+export const selectRankingsLoading = (state) => state.rankings.loading;
+export const selectRankingsError = (state) => state.rankings.error;
+
+export default rankingsSlice.reducer;

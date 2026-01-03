@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { HiUsers, HiCog, HiCheck, HiArrowRight, HiExclamation } from 'react-icons/hi';
 import { ErrorState, RefreshButton, PageWrapper, Card, Button } from '../ui';
 import { ClanProfile } from '../shared';
-import { WarLog, CurrentWar, CapitalRaids } from '../Clan';
+import { WarLog, CurrentWar, CapitalRaids, CurrentCWL } from '../Clan';
 import Loader from '../Loader';
 import SEO from '../SEO';
 import { useClanWithDetails } from '../../Store/hooks';
@@ -269,6 +269,9 @@ const MyClan = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-6">
           {/* Current War Status - skipFetch because data was fetched in parallel */}
           <CurrentWar clanTag={clanTag} showTitle={true} skipFetch={true} />
+          
+          {/* Clan War League - skipFetch because data was fetched in parallel */}
+          <CurrentCWL clanTag={clanTag} showTitle={true} skipFetch={true} />
           
           {/* Capital Raid Weekends - skipFetch because data was fetched in parallel */}
           <CapitalRaids clanTag={clanTag} showTitle={true} limit={5} skipFetch={true} />
