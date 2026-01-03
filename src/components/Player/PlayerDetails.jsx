@@ -50,6 +50,13 @@ const PlayerDetails = () => {
 
   // Player Profile using reusable component
   if (hasData) {
+    const headerActions = (
+      <HeaderActions>
+        <BackButton onClick={handleBack} />
+        <RefreshButton onClick={handleRefresh} loading={loading} />
+      </HeaderActions>
+    );
+
     return (
       <>
         <SEO 
@@ -58,20 +65,13 @@ const PlayerDetails = () => {
           player={player}
         />
         <PageWrapper>
-          {/* Back button header */}
-          <div className="max-w-6xl mx-auto px-4 py-4">
-            <HeaderActions className="justify-between">
-              <BackButton onClick={handleBack} label="Go Back" />
-              <RefreshButton onClick={handleRefresh} loading={loading} />
-            </HeaderActions>
-          </div>
-          
           <PlayerProfile 
             player={player}
             showHeader={true}
             showStats={true}
             showHeroes={true}
             showAchievements={true}
+            headerActions={headerActions}
             variant="full"
           />
         </PageWrapper>
