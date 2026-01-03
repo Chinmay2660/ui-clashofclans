@@ -1,70 +1,178 @@
-# Getting Started with Create React App
+# ClasherStats - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern React application for tracking Clash of Clans player and clan statistics. Built with React 19, Vite, Redux Toolkit, and Tailwind CSS.
 
-## Available Scripts
+![ClasherStats](https://img.shields.io/badge/Clash%20of%20Clans-Stats%20Tracker-orange)
+![React](https://img.shields.io/badge/React-19-blue)
+![Vite](https://img.shields.io/badge/Vite-5.x-purple)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.x-cyan)
 
-In the project directory, you can run:
+## ✨ Features
 
-### `npm start`
+- 🔍 **Player Search** - Look up any player by tag and view detailed statistics
+- 🏰 **Clan Search** - Explore clan details, members, and war history
+- 👤 **My Profile** - Quick access to your saved player profile
+- 👥 **My Clan** - View your clan's stats and member list
+- 🏆 **Rankings** - Global and regional leaderboards
+- 📊 **Detailed Stats** - Heroes, achievements, war stars, donations, and more
+- 🎨 **Beautiful UI** - Dark theme with CoC-inspired design
+- 📱 **Responsive** - Works on all devices
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **React 19** - Latest React with concurrent features
+- **Vite** - Lightning fast build tool
+- **Redux Toolkit** - Modern state management with slices
+- **Tailwind CSS** - Utility-first styling
+- **React Router 6** - Client-side routing
+- **Axios** - HTTP client for API calls
+- **React Icons** - Icon library
 
-### `npm test`
+## 📁 Project Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+src/
+├── assets/              # Images, icons, and static files
+├── components/
+│   ├── ui/              # Reusable UI components
+│   │   ├── Button.jsx
+│   │   ├── Card.jsx
+│   │   ├── Badge.jsx
+│   │   ├── Input.jsx
+│   │   ├── Skeleton.jsx  # Loading skeletons
+│   │   └── StatCard.jsx
+│   ├── shared/          # Shared profile components
+│   │   ├── PlayerProfile.jsx
+│   │   └── ClanProfile.jsx
+│   ├── Home/
+│   ├── Search/
+│   ├── Player/
+│   ├── MyProfile/
+│   ├── MyTeam/
+│   └── Loader.jsx
+├── Config/
+│   └── Config.jsx       # API endpoints configuration
+├── Store/
+│   ├── slices/          # Redux slices
+│   │   ├── playerSlice.js
+│   │   ├── clanSlice.js
+│   │   ├── uiSlice.js
+│   │   ├── rankingsSlice.js
+│   │   └── leaguesSlice.js
+│   ├── hooks.js         # Custom Redux hooks
+│   └── store.jsx        # Store configuration
+└── main.jsx             # App entry point
+```
 
-### `npm run build`
+## 🚀 Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js 18+ 
+- npm or yarn
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation
 
-### `npm run eject`
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/ui-clashofclans.git
+cd ui-clashofclans
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Install dependencies:
+```bash
+npm install
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Start the development server:
+```bash
+npm run dev
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📜 Available Scripts
 
-## Learn More
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## ⚙️ Configuration
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Edit `src/Config/Config.jsx` to configure:
 
-### Code Splitting
+- API endpoints (local vs production)
+- Your player tag for "My Profile"
+- Your clan tag for "My Clan"
+- Location IDs for rankings
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```javascript
+// src/Config/Config.jsx
+const API_BASE_URL = isLocalhost 
+  ? 'http://localhost:8000/api' 
+  : 'https://api-clashofclans.vercel.app/api';
+```
 
-### Analyzing the Bundle Size
+## 🎨 Customization
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Theme Colors
 
-### Making a Progressive Web App
+The app uses a dark theme with custom colors defined in `tailwind.config.js`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **Primary**: Amber/Gold gradient
+- **Secondary**: Purple/Violet gradient
+- **Background**: Dark gray (#111827)
 
-### Advanced Configuration
+### Adding Your Profile
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Update the player/clan tags in:
+- `src/components/MyProfile/MyProfile.jsx` - `MY_PLAYER_TAG`
+- `src/components/MyTeam/MyTeam.jsx` - `MY_CLAN_TAG`
 
-### Deployment
+## 🔧 Custom Hooks
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The app provides convenient hooks for data fetching:
 
-### `npm run build` fails to minify
+```javascript
+import { usePlayer, useClan, useRankings, useLeagues } from './Store/hooks';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+// Player data
+const { player, loading, error, getPlayer, hasData } = usePlayer();
+
+// Clan data
+const { clan, getClan, hasData } = useClan();
+
+// Rankings
+const { getClanRankings, getPlayerRankings, locations } = useRankings();
+
+// Leagues
+const { leagues, warLeagues, getLeagues } = useLeagues();
+```
+
+## 🏗️ Building for Production
+
+```bash
+npm run build
+```
+
+The build output will be in the `dist/` folder, ready for deployment.
+
+## 🌐 Deployment
+
+The app is configured for deployment on:
+- **Vercel** (recommended)
+- **Netlify**
+- Any static hosting service
+
+## 📄 License
+
+MIT License - feel free to use this project for learning or personal use.
+
+## 🙏 Acknowledgments
+
+- [Clash of Clans API](https://developer.clashofclans.com/)
+- [RoyaleAPI Proxy](https://docs.royaleapi.com/#/proxy)
+- Game assets © Supercell

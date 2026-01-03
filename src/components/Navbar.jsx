@@ -1,92 +1,161 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { IconButton, Button, Box, useColorMode, useColorModeValue } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { useNavigate } from 'react-router-dom';
-import COC_LOGO from '../assets/others/COC_LOGO.png'
-import {CloseIcon, HamburgerIcon} from '@chakra-ui/icons'
+import { useState, useCallback, memo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { HiMenu, HiX, HiHome, HiSearch, HiUsers, HiUser, HiCog } from 'react-icons/hi';
+import { Button } from './ui';
+import cocLogo from '../assets/others/COC_LOGO.png';
 
-const Navbar = (props) => {
-    const { toggleColorMode } = useColorMode();
-    const navigate = useNavigate()
-    const iconColor = useColorModeValue('#111827', 'white');
-    const bg = useColorModeValue('white', '#111827');
-    const [showDrawer, setShowDrawer] = useState(false)
+const NavLink = memo(({ icon: Icon, children, active, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`
+      flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+      transition-all duration-200
+      ${active 
+        ? 'bg-amber-500/15 text-amber-400' 
+        : 'text-gray-400 hover:bg-white/5 hover:text-white'
+      }
+    `}
+  >
+    <Icon size={18} />
+    {children}
+  </button>
+));
 
-    const handleHome = () => {
-        navigate('/')
-        setShowDrawer(false)
-    }
+NavLink.displayName = 'NavLink';
 
-    const handleLowBatteryTeam = () => {
-        navigate('/myteam')
-        setShowDrawer(false)
-    }
+const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [showDrawer, setShowDrawer] = useState(false);
 
-    const handleSearch = () => {
-        navigate('/search')
-        setShowDrawer(false)
-    }
+  const handleNavigate = useCallback((path) => {
+    navigate(path);
+    setShowDrawer(false);
+  }, [navigate]);
 
-    const handleProfile = () => {
-        console.log("test")
-    }
+  const navLinks = [
+    { path: '/', label: 'Home', icon: HiHome },
+    { path: '/search', label: 'Search', icon: HiSearch },
+    { path: '/profile', label: 'My Profile', icon: HiUser },
+    { path: '/myclan', label: 'My Clan', icon: HiUsers },
+    { path: '/settings', label: 'Settings', icon: HiCog },
+  ];
 
-    const handleSignIn = () => {
-        console.log("test")
-    }
+  return (
+    <>
+      {/* Main Navbar */}
+      <nav className="sticky top-0 z-40 bg-dark-900/95 backdrop-blur-xl border-b border-gray-800/50">
+        
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16 md:h-18">
+            {/* Logo */}
+            <button 
+              onClick={() => handleNavigate('/')}
+              className="flex items-center gap-3 group"
+            >
+              <img 
+                src={cocLogo} 
+                alt="Clasher Stats" 
+                className="h-10 w-auto group-hover:scale-105 transition-transform duration-300"
+              />
+              <span className="hidden sm:block text-xl font-bold text-white">
+                Clasher<span className="text-amber-400">Stats</span>
+              </span>
+            </button>
 
-    const handleLogIn = () => {
-        console.log("test")
-    }
-
-    const handleDrawerClick = () => {
-        setShowDrawer((prevState) => !prevState)
-    }
-
-    return (
-        <Box bg={bg} style={{ borderBottom: '2px solid rgb(125 211 252)', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <img src={COC_LOGO} style={{ height: '3rem', width: '7rem', marginRight: 'auto' }} alt='COC LOGO' />
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-2">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.path}
+                  icon={link.icon}
+                  active={location.pathname === link.path}
+                  onClick={() => handleNavigate(link.path)}
+                >
+                  {link.label}
+                </NavLink>
+              ))}
             </div>
-            <div className='navbar-button'>
-                <Button variant='ghost' mr='0.5rem' onClick={handleHome}>Home</Button>
-                <Button variant='ghost' mr='0.5rem' onClick={handleLowBatteryTeam}>Low Battery Team</Button>
-                <Button variant='ghost' mr='0.5rem' onClick={handleSearch}>Search</Button>
-                {/* <Button variant='ghost' mr='0.5rem' onClick={handleProfile}>Profile</Button>
-            <Button variant='ghost' mr='0.5rem' onClick={handleSignIn}>Sign Up</Button>
-            <Button variant='ghost' mr='0.5rem' onClick={handleLogIn}>Log in</Button> */}
-                {/* <IconButton
-                aria-label="Toggle dark mode"
-                icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
-                onClick={toggleColorMode}
-                color={iconColor}
-                variant="ghost"
-            /> */}
-            </div>
-            {/* navbar drawer code  */}
-            <HamburgerIcon fontSize="2rem" className='navbar-drawer-button' onClick={handleDrawerClick}/>
-            {showDrawer &&(
-                <Box style={{position:'absolute', top:'0', right:'0', display:'flex', alignItems:'start', flexDirection:'column', backgroundColor:bg, height:'100%', width:'50%', zIndex:'1'}}>
-                    <CloseIcon style={{position:'absolute', right:'20px', top:'20px'}} onClick={()=>setShowDrawer(false)}/>
-                    <Box paddingTop="50px">
-                        <Button variant='ghost' mr='0.5rem' onClick={handleHome}>Home</Button>
-                        <Button variant='ghost' mr='0.5rem' onClick={handleLowBatteryTeam}>Low Battery Team</Button>
-                        <Button variant='ghost' mr='0.5rem' onClick={handleSearch}>Search</Button>
-                    </Box>
-                </Box>
-            )
-            }
-        </Box>
-    );
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2.5 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all"
+              onClick={() => setShowDrawer(true)}
+              aria-label="Open menu"
+            >
+              <HiMenu size={22} />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Drawer Overlay */}
+      {showDrawer && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 md:hidden"
+          onClick={() => setShowDrawer(false)}
+        />
+      )}
+
+      {/* Mobile Drawer */}
+      <div
+        className={`
+          fixed top-0 right-0 h-full w-72 z-50 
+          transform transition-transform duration-300 ease-out md:hidden
+          bg-dark-900 border-l border-gray-800/50
+          ${showDrawer ? 'translate-x-0' : 'translate-x-full'}
+        `}
+      >
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-800/50">
+          <div className="flex items-center gap-2">
+            <img src={cocLogo} alt="" className="h-8 w-auto" />
+            <span className="text-lg font-semibold text-white">Menu</span>
+          </div>
+          <button
+            onClick={() => setShowDrawer(false)}
+            className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+            aria-label="Close menu"
+          >
+            <HiX size={20} />
+          </button>
+        </div>
+
+        {/* Drawer Links */}
+        <div className="p-4 space-y-1">
+          {navLinks.map((link) => (
+            <button
+              key={link.path}
+              onClick={() => handleNavigate(link.path)}
+              className={`
+                w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left
+                transition-all duration-200
+                ${location.pathname === link.path 
+                  ? 'bg-amber-500/15 text-amber-400' 
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                }
+              `}
+            >
+              <link.icon size={20} />
+              <span className="font-medium">{link.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Drawer Footer */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800/50">
+          <Button 
+            variant="primary" 
+            fullWidth
+            onClick={() => handleNavigate('/search')}
+          >
+            <HiSearch size={18} />
+            Search Now
+          </Button>
+        </div>
+      </div>
+    </>
+  );
 };
 
-const mapStateToProps = (state) => ({
-
-});
-
-const mapDispatchToProps = {
-
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+export default memo(Navbar);

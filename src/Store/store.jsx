@@ -1,12 +1,24 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { reducer } from "../Store/Reducers";
+import { configureStore } from '@reduxjs/toolkit';
+import { 
+  playerReducer, 
+  clanReducer, 
+  uiReducer, 
+  rankingsReducer, 
+  leaguesReducer 
+} from './slices';
 
 const store = configureStore({
-    reducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-        immutableCheck: false,
-        serializableCheck: false,
-    })
-})
+  reducer: {
+    player: playerReducer,
+    clan: clanReducer,
+    ui: uiReducer,
+    rankings: rankingsReducer,
+    leagues: leaguesReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
 
-export default store
+export default store;
