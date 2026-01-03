@@ -180,18 +180,21 @@ const RaidStats = memo(({ raids }) => {
 RaidStats.displayName = 'RaidStats';
 
 // Main Capital Raids Component
-const CapitalRaids = ({ clanTag, showTitle = true, limit = 5 }) => {
+const CapitalRaids = ({ clanTag, showTitle = true, limit = 5, skipFetch = false }) => {
   const { raids, loading, error, getCapitalRaids, hasData } = useCapitalRaids();
   const [showAll, setShowAll] = useState(false);
   const fetchedTagRef = useRef(null);
 
   useEffect(() => {
+    // Skip fetching if parent already fetched data in parallel
+    if (skipFetch) return;
+    
     // Only fetch if we haven't fetched for this tag yet
     if (clanTag && fetchedTagRef.current !== clanTag && !loading) {
       fetchedTagRef.current = clanTag;
       getCapitalRaids(clanTag);
     }
-  }, [clanTag, getCapitalRaids, loading]);
+  }, [clanTag, getCapitalRaids, loading, skipFetch]);
 
   // Loading state
   if (loading) {

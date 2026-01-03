@@ -408,6 +408,95 @@ export const useGoldPass = () => {
   };
 };
 
+// Custom hook for fetching ALL clan data in parallel (clan details + war log + current war + capital raids)
+export const useClanWithDetails = () => {
+  const dispatch = useDispatch();
+  
+  // Clan data
+  const clan = useSelector(selectCurrentClan);
+  const clanLoading = useSelector(selectClanLoading);
+  const clanError = useSelector(selectClanError);
+  
+  // War log
+  const warLog = useSelector(selectWarLog);
+  const warLogLoading = useSelector(selectWarLogLoading);
+  const warLogError = useSelector(selectWarLogError);
+  
+  // Current war
+  const currentWar = useSelector(selectCurrentWar);
+  const currentWarLoading = useSelector(selectCurrentWarLoading);
+  const currentWarError = useSelector(selectCurrentWarError);
+  
+  // Capital raids
+  const capitalRaidSeasons = useSelector(selectCapitalRaidSeasons);
+  const capitalRaidLoading = useSelector(selectCapitalRaidLoading);
+  const capitalRaidError = useSelector(selectCapitalRaidError);
+
+  // Fetch all data in parallel
+  const fetchAllClanData = useCallback((tag) => {
+    const cleanTag = tag.replace('#', '').toUpperCase().trim();
+    
+    // Dispatch all requests simultaneously - they don't depend on each other
+    return Promise.all([
+      dispatch(fetchClan(cleanTag)),
+      dispatch(fetchWarLog(cleanTag)),
+      dispatch(fetchCurrentWar(cleanTag)),
+      dispatch(fetchCapitalRaidSeasons(cleanTag)),
+    ]);
+  }, [dispatch]);
+
+  // Clear all clan-related data
+  const clearAllClanData = useCallback(() => {
+    dispatch(clearCurrentClan());
+    dispatch(clearWarLog());
+    dispatch(clearCurrentWar());
+    dispatch(clearCapitalRaids());
+  }, [dispatch]);
+
+  // Combined loading state - true if ANY request is still loading
+  const isLoading = clanLoading || warLogLoading || currentWarLoading || capitalRaidLoading;
+  
+  // Initial loading - only clan is loading (for skeleton)
+  const isInitialLoading = clanLoading;
+
+  return {
+    // Clan data
+    clan,
+    clanLoading,
+    clanError,
+    hasClanData: clan && !clan.error && clan.name,
+    
+    // War log
+    warLog,
+    wars: warLog?.items || [],
+    warLogLoading,
+    warLogError,
+    hasWarLog: warLog && warLog.items && warLog.items.length > 0,
+    
+    // Current war
+    currentWar,
+    currentWarLoading,
+    currentWarError,
+    isInWar: currentWar && currentWar.state !== 'notInWar',
+    warState: currentWar?.state,
+    
+    // Capital raids
+    capitalRaidSeasons,
+    raids: capitalRaidSeasons?.items || [],
+    capitalRaidLoading,
+    capitalRaidError,
+    hasRaids: capitalRaidSeasons && capitalRaidSeasons.items && capitalRaidSeasons.items.length > 0,
+    
+    // Combined states
+    isLoading,
+    isInitialLoading,
+    
+    // Actions
+    fetchAllClanData,
+    clearAllClanData,
+  };
+};
+
 // Export typed dispatch for use in components
 export const useAppDispatch = () => useDispatch();
 export const useAppSelector = useSelector;

@@ -1,3 +1,14 @@
-# https://www.robotstxt.org/robotstxt.html
+# ClasherStats - Clash of Clans Statistics Tracker
+# https://clasherstats.vercel.app
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemap
+Sitemap: https://clasherstats.vercel.app/sitemap.xml
+
+# Crawl-delay (optional - be nice to servers)
+Crawl-delay: 1
+
+# Disallow admin/private routes if any
+Disallow: /api/

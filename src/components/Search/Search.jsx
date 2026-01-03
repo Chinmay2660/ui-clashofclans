@@ -4,6 +4,7 @@ import { HiSearch, HiUser, HiUsers, HiArrowRight, HiSparkles, HiHashtag, HiViewL
 import { Card, Button, Badge } from '../ui';
 import { PlayerProfile, ClanProfile } from '../shared';
 import Loader from '../Loader';
+import SEO from '../SEO';
 import { usePlayer, useClan, useSearchMode, useClanSearch } from '../../Store/hooks';
 
 // Assets
@@ -216,7 +217,13 @@ const Search = () => {
   }, [setClanSearch, setPlayerSearch, getClan, getPlayer]);
 
   return (
-    <div className="min-h-screen bg-dark-900 relative overflow-hidden">
+    <>
+      <SEO 
+        title="Search Players & Clans"
+        description="Search for any Clash of Clans player or clan by tag or name. View detailed statistics, war logs, heroes, achievements, and more."
+        path="/search"
+      />
+      <div className="min-h-screen bg-dark-900 relative overflow-hidden">
       {/* Floating background characters */}
       <FloatingCharacter src={electroDragon} className="w-32 h-32 lg:w-48 lg:h-48 top-20 -left-12" delay={0} />
       <FloatingCharacter src={pekka} className="w-28 h-28 lg:w-40 lg:h-40 top-40 -right-8" delay={1} />
@@ -449,11 +456,32 @@ const Search = () => {
                     </div>
                   </Card>
                 ) : (
-                  // Clan search by tag - show full clan profile
-                  <ClanProfile clan={clan} variant="card" />
+                  // Clan search by tag - show card with view details button
+                  <div className="space-y-0">
+                    <ClanProfile clan={clan} variant="card" />
+                    {/* View Full Details Button */}
+                    <button
+                      onClick={() => navigate(`/clan/${clan.tag.replace('#', '')}`)}
+                      className="w-full mt-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-amber-500/30 hover:scale-[1.02]"
+                    >
+                      <span className="text-sm md:text-base">View Full Clan Details</span>
+                      <HiArrowRight size={18} />
+                    </button>
+                  </div>
                 )
               ) : (
-                <PlayerProfile player={player} variant="card" />
+                // Player search - show card with view details button
+                <div className="space-y-0">
+                  <PlayerProfile player={player} variant="card" />
+                  {/* View Full Profile Button */}
+                  <button
+                    onClick={() => navigate(`/player/${player.tag.replace('#', '')}`)}
+                    className="w-full mt-4 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white font-semibold py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg hover:shadow-purple-500/30 hover:scale-[1.02]"
+                  >
+                    <span className="text-sm md:text-base">View Full Player Profile</span>
+                    <HiArrowRight size={18} />
+                  </button>
+                </div>
               )}
             </div>
           )}
@@ -480,6 +508,7 @@ const Search = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

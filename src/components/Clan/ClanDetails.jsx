@@ -4,36 +4,40 @@ import { ErrorState, RefreshButton, BackButton, HeaderActions, PageWrapper } fro
 import { ClanProfile } from '../shared';
 import { WarLog, CurrentWar, CapitalRaids } from './';
 import Loader from '../Loader';
-import { useClan, useWarLog, useCurrentWar, useCapitalRaids } from '../../Store/hooks';
+import SEO from '../SEO';
+import { useClanWithDetails } from '../../Store/hooks';
 
 const ClanDetails = () => {
   const { clanTag } = useParams();
   const navigate = useNavigate();
-  const { clan, loading, error, getClan, hasData } = useClan();
-  const { clearLog } = useWarLog();
-  const { clearWar } = useCurrentWar();
-  const { clearRaids } = useCapitalRaids();
+  const { 
+    clan, 
+    clanLoading, 
+    clanError, 
+    hasClanData,
+    isLoading,
+    isInitialLoading,
+    fetchAllClanData, 
+    clearAllClanData 
+  } = useClanWithDetails();
   const lastFetchedTag = useRef(null);
 
   useEffect(() => {
     // Only fetch if clanTag changed and not already loading
-    if (clanTag && clanTag !== lastFetchedTag.current && !loading) {
+    if (clanTag && clanTag !== lastFetchedTag.current && !clanLoading) {
       lastFetchedTag.current = clanTag;
-      // Clear war-related data for new clan
-      clearLog();
-      clearWar();
-      clearRaids();
-      getClan(clanTag);
+      // Clear and fetch ALL data in PARALLEL
+      clearAllClanData();
+      fetchAllClanData(clanTag);
     }
-  }, [clanTag, getClan, clearLog, clearWar, clearRaids, loading]);
+  }, [clanTag, fetchAllClanData, clearAllClanData, clanLoading]);
 
   const handleRefresh = () => {
     if (clanTag) {
       lastFetchedTag.current = null; // Reset to allow refetch
-      clearLog();
-      clearWar();
-      clearRaids();
-      getClan(clanTag);
+      clearAllClanData();
+      // Fetch all data in PARALLEL for faster refresh
+      fetchAllClanData(clanTag);
     }
   };
 
@@ -42,17 +46,17 @@ const ClanDetails = () => {
   // Check if loaded clan matches the requested tag
   const isCorrectClan = clan?.tag?.replace('#', '').toUpperCase() === clanTag?.toUpperCase();
 
-  // Show sword loader while loading
-  if (loading) {
+  // Show sword loader while initial loading
+  if (isInitialLoading) {
     return <Loader />;
   }
 
   // Error State
-  if (error && !hasData) {
+  if (clanError && !hasClanData) {
     return (
       <ErrorState
         title="Clan Not Found"
-        message={error?.message || `Could not load details for clan #${clanTag}`}
+        message={clanError?.message || `Could not load details for clan #${clanTag}`}
         onRetry={handleRefresh}
         onBack={handleBack}
         showBackButton={true}
@@ -62,16 +66,22 @@ const ClanDetails = () => {
   }
 
   // Clan Profile using reusable component
-  if (hasData && isCorrectClan) {
+  if (hasClanData && isCorrectClan) {
     const headerActions = (
       <HeaderActions>
         <BackButton onClick={handleBack} />
-        <RefreshButton onClick={handleRefresh} loading={loading} />
+        <RefreshButton onClick={handleRefresh} loading={isLoading} />
       </HeaderActions>
     );
 
     return (
-      <PageWrapper>
+      <>
+        <SEO 
+          title={`${clan?.name || 'Clan'} - Clan Profile`}
+          path={`/clan/${clanTag}`}
+          clan={clan}
+        />
+        <PageWrapper>
         <ClanProfile 
           clan={clan}
           showHeader={true}
@@ -83,18 +93,19 @@ const ClanDetails = () => {
           variant="full"
         />
         
-        {/* Clan War & Activity Section */}
+        {/* Clan War & Activity Section - skipFetch because data was fetched in parallel */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-6">
           {/* Current War Status */}
-          <CurrentWar clanTag={clanTag} showTitle={true} />
+          <CurrentWar clanTag={clanTag} showTitle={true} skipFetch={true} />
           
           {/* Capital Raid Weekends */}
-          <CapitalRaids clanTag={clanTag} showTitle={true} limit={5} />
+          <CapitalRaids clanTag={clanTag} showTitle={true} limit={5} skipFetch={true} />
           
           {/* War Log History */}
-          <WarLog clanTag={clanTag} showTitle={true} limit={10} />
+          <WarLog clanTag={clanTag} showTitle={true} limit={10} skipFetch={true} />
         </div>
       </PageWrapper>
+      </>
     );
   }
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { HiSearch, HiUsers, HiUser, HiLightningBolt, HiStar, HiShieldCheck, HiArrowRight, HiChartBar } from 'react-icons/hi';
 import { Button, Card, Badge } from '../ui';
 import { useSearchMode } from '../../Store/hooks';
+import SEO from '../SEO';
 
 // Assets
 import wizardImg from '../../assets/backgroundPng/MagicWardenCropped.png';
@@ -166,7 +167,13 @@ const Home = () => {
   ];
 
     return (
-    <div className="min-h-screen bg-dark-900 overflow-hidden">
+    <>
+      <SEO 
+        title="Clash of Clans Player & Clan Tracker"
+        description="Track your Clash of Clans player and clan statistics. View detailed insights on trophies, war performance, heroes, achievements, clan war log, and more. Free CoC stats tracker."
+        path="/"
+      />
+      <div className="min-h-screen bg-dark-900 overflow-hidden">
       
       {/* ========== HERO SECTION ========== */}
       <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center justify-center">
@@ -378,6 +385,7 @@ const Home = () => {
         </div>
       </section>
     </div>
+    </>
     );
 };
 

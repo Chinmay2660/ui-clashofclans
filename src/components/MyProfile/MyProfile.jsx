@@ -4,6 +4,7 @@ import { HiUser, HiCog, HiCheck, HiArrowRight, HiExclamation } from 'react-icons
 import { ErrorState, RefreshButton, Card, Button } from '../ui';
 import { PlayerProfile } from '../shared';
 import Loader from '../Loader';
+import SEO from '../SEO';
 import { usePlayer } from '../../Store/hooks';
 import { useUserSettings } from '../../hooks/useUserSettings';
 
@@ -32,32 +33,32 @@ const PlayerSetup = memo(({ onSave, loading, error, onClearError }) => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-900 flex items-center justify-center px-4">
-      <Card className="max-w-md w-full p-6 md:p-8 text-center">
+    <div className="min-h-screen bg-dark-900 flex items-center justify-center px-3 sm:px-4 py-8">
+      <Card className="max-w-md w-full p-5 sm:p-6 md:p-8 text-center">
         {/* Icon */}
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-600/20 flex items-center justify-center mx-auto mb-6">
-          <HiUser className="text-purple-400" size={40} />
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-600/20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <HiUser className="text-purple-400" size={32} />
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 sm:mb-2">
           Set Up Your Profile
         </h1>
-        <p className="text-gray-400 mb-6">
+        <p className="text-gray-400 text-sm sm:text-base mb-4 sm:mb-6 px-2">
           Enter your player tag to link your Clash of Clans account
         </p>
 
         {/* Input */}
         <div className="mb-4">
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">#</span>
+            <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-base sm:text-lg">#</span>
             <input
               type="text"
               placeholder="Enter your player tag"
               value={inputValue}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
-              className={`w-full bg-dark-800 border rounded-xl pl-10 pr-4 py-4 text-white text-lg font-mono placeholder-gray-600 focus:outline-none focus:ring-2 transition-colors ${
+              className={`w-full bg-dark-800 border rounded-lg sm:rounded-xl pl-8 sm:pl-10 pr-3 sm:pr-4 py-3 sm:py-4 text-white text-base sm:text-lg font-mono placeholder-gray-600 focus:outline-none focus:ring-2 transition-colors ${
                 error 
                   ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' 
                   : 'border-gray-700/50 focus:border-purple-500/50 focus:ring-purple-500/20'
@@ -65,8 +66,8 @@ const PlayerSetup = memo(({ onSave, loading, error, onClearError }) => {
             />
           </div>
           {error && (
-            <div className="flex items-center gap-2 text-red-400 text-sm mt-2 text-left">
-              <HiExclamation size={16} />
+            <div className="flex items-start gap-2 text-red-400 text-xs sm:text-sm mt-2 text-left">
+              <HiExclamation size={16} className="flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
@@ -80,23 +81,24 @@ const PlayerSetup = memo(({ onSave, loading, error, onClearError }) => {
           onClick={handleSave}
           loading={loading}
           disabled={!inputValue.trim()}
+          className="text-sm sm:text-base"
         >
-          <HiCheck size={20} />
+          <HiCheck size={18} />
           Link My Profile
         </Button>
 
         {/* Help text */}
-        <div className="mt-6 pt-6 border-t border-gray-800">
-          <p className="text-gray-500 text-sm mb-3">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-800">
+          <p className="text-gray-500 text-xs sm:text-sm mb-2 sm:mb-3 px-2">
             Don't know your tag? Open Clash of Clans, tap your profile picture, and find it below your name.
           </p>
           <Link 
             to="/settings" 
-            className="text-amber-400 hover:text-amber-300 text-sm inline-flex items-center gap-1"
+            className="text-amber-400 hover:text-amber-300 text-xs sm:text-sm inline-flex items-center gap-1"
           >
-            <HiCog size={16} />
+            <HiCog size={14} />
             Go to Settings
-            <HiArrowRight size={14} />
+            <HiArrowRight size={12} />
           </Link>
         </div>
       </Card>
@@ -177,12 +179,19 @@ const MyProfile = () => {
   // If no player tag configured, show setup
   if (!hasPlayerTag) {
     return (
-      <PlayerSetup 
-        onSave={handleSaveTag} 
-        loading={loading} 
-        error={setupError}
-        onClearError={() => setSetupError(null)}
-      />
+      <>
+        <SEO 
+          title="My Profile - Setup"
+          description="Link your Clash of Clans player account to view your detailed statistics, heroes, achievements, and more."
+          path="/profile"
+        />
+        <PlayerSetup 
+          onSave={handleSaveTag} 
+          loading={loading} 
+          error={setupError}
+          onClearError={() => setSetupError(null)}
+        />
+      </>
     );
   }
 
@@ -205,15 +214,23 @@ const MyProfile = () => {
   // Player Profile - only show if it's MY profile
   if (hasData && isMyProfile) {
     return (
-      <PlayerProfile 
-        player={player} 
-        showHeader={true}
-        showStats={true}
-        showHeroes={true}
-        showAchievements={true}
-        headerActions={headerActions}
-        variant="full"
-      />
+      <>
+        <SEO 
+          title="My Profile"
+          description={`View your Clash of Clans stats. Track your trophies, heroes, achievements, and more.`}
+          path="/profile"
+          player={player}
+        />
+        <PlayerProfile 
+          player={player} 
+          showHeader={true}
+          showStats={true}
+          showHeroes={true}
+          showAchievements={true}
+          headerActions={headerActions}
+          variant="full"
+        />
+      </>
     );
   }
 

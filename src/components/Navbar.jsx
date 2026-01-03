@@ -100,7 +100,7 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       <div
         className={`
-          fixed top-0 right-0 h-full w-72 z-50 
+          fixed top-0 right-0 h-full w-[280px] sm:w-72 z-50 
           transform transition-transform duration-300 ease-out md:hidden
           bg-dark-900 border-l border-gray-800/50
           ${showDrawer ? 'translate-x-0' : 'translate-x-full'}

@@ -82,17 +82,20 @@ const CurrentWarSkeleton = () => (
 );
 
 // Main Current War Component
-const CurrentWar = ({ clanTag, showTitle = true }) => {
+const CurrentWar = ({ clanTag, showTitle = true, skipFetch = false }) => {
   const { currentWar, loading, error, getCurrentWar, isInWar, warState } = useCurrentWar();
   const fetchedTagRef = useRef(null);
 
   useEffect(() => {
+    // Skip fetching if parent already fetched data in parallel
+    if (skipFetch) return;
+    
     // Only fetch if we haven't fetched for this tag yet
     if (clanTag && fetchedTagRef.current !== clanTag && !loading) {
       fetchedTagRef.current = clanTag;
       getCurrentWar(clanTag);
     }
-  }, [clanTag, getCurrentWar, loading]);
+  }, [clanTag, getCurrentWar, loading, skipFetch]);
 
   // Loading state
   if (loading) {

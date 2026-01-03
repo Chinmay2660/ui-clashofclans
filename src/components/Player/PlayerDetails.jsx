@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ErrorState, RefreshButton, BackButton, HeaderActions, PageWrapper } from '../ui';
 import { PlayerProfile } from '../shared';
 import Loader from '../Loader';
+import SEO from '../SEO';
 import { usePlayer } from '../../Store/hooks';
 
 const PlayerDetails = () => {
@@ -50,24 +51,31 @@ const PlayerDetails = () => {
   // Player Profile using reusable component
   if (hasData) {
     return (
-      <PageWrapper>
-        {/* Back button header */}
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <HeaderActions className="justify-between">
-            <BackButton onClick={handleBack} label="Go Back" />
-            <RefreshButton onClick={handleRefresh} loading={loading} />
-          </HeaderActions>
-        </div>
-        
-        <PlayerProfile 
+      <>
+        <SEO 
+          title={`${player?.name || 'Player'} - Player Profile`}
+          path={`/player/${playerTag}`}
           player={player}
-          showHeader={true}
-          showStats={true}
-          showHeroes={true}
-          showAchievements={true}
-          variant="full"
         />
-      </PageWrapper>
+        <PageWrapper>
+          {/* Back button header */}
+          <div className="max-w-6xl mx-auto px-4 py-4">
+            <HeaderActions className="justify-between">
+              <BackButton onClick={handleBack} label="Go Back" />
+              <RefreshButton onClick={handleRefresh} loading={loading} />
+            </HeaderActions>
+          </div>
+          
+          <PlayerProfile 
+            player={player}
+            showHeader={true}
+            showStats={true}
+            showHeroes={true}
+            showAchievements={true}
+            variant="full"
+          />
+        </PageWrapper>
+      </>
     );
   }
 

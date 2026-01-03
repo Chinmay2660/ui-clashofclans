@@ -197,18 +197,21 @@ const WarStats = memo(({ wars }) => {
 WarStats.displayName = 'WarStats';
 
 // Main War Log Component
-const WarLog = ({ clanTag, showTitle = true, limit = 10 }) => {
+const WarLog = ({ clanTag, showTitle = true, limit = 10, skipFetch = false }) => {
   const { wars, loading, error, getWarLog, hasData } = useWarLog();
   const [showAll, setShowAll] = useState(false);
   const fetchedTagRef = useRef(null);
 
   useEffect(() => {
+    // Skip fetching if parent already fetched data in parallel
+    if (skipFetch) return;
+    
     // Only fetch if we haven't fetched for this tag yet
     if (clanTag && fetchedTagRef.current !== clanTag && !loading) {
       fetchedTagRef.current = clanTag;
       getWarLog(clanTag);
     }
-  }, [clanTag, getWarLog, loading]);
+  }, [clanTag, getWarLog, loading, skipFetch]);
 
   // Loading state
   if (loading) {
