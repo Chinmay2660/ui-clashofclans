@@ -5,16 +5,21 @@ import { useWarLog } from '../../Store/hooks';
 import { Skeleton } from '../ui/Skeleton';
 import { formatDate } from '../../utils';
 
-// Single war entry
+// Single war entry - CoC theme: gem (win), war (loss), gold (draw)
 const WarEntry = memo(({ war, index }) => {
   const isWin = war.result === 'win';
   const isLoss = war.result === 'lose';
   const isDraw = war.result === 'tie';
   const isUnknown = war.result === null;
-  
-  const resultColor = isWin ? 'text-emerald-400' : isLoss ? 'text-red-400' : isDraw ? 'text-yellow-400' : 'text-gray-400';
-  const resultBg = isWin ? 'bg-emerald-500/10' : isLoss ? 'bg-red-500/10' : isDraw ? 'bg-yellow-500/10' : 'bg-gray-500/10';
-  
+
+  const resultStyles = isWin
+    ? { bg: 'bg-gem-500/25 border-l-4 border-gem-500', badge: 'gem', text: 'text-gem-400', accent: 'text-gem-400' }
+    : isLoss
+      ? { bg: 'bg-war-500/25 border-l-4 border-war-500', badge: 'war', text: 'text-war-400', accent: 'text-war-400' }
+      : isDraw
+        ? { bg: 'bg-amber-500/25 border-l-4 border-amber-500', badge: 'gold', text: 'text-amber-300', accent: 'text-amber-400' }
+        : { bg: 'bg-gray-500/15 border-l-4 border-gray-600', badge: 'outline', text: 'text-gray-400', accent: 'text-gray-400' };
+
   const getResultLabel = () => {
     if (isWin) return 'WIN';
     if (isLoss) return 'LOSS';
@@ -27,7 +32,7 @@ const WarEntry = memo(({ war, index }) => {
   
   return (
     <div 
-      className={`p-3 sm:p-4 rounded-xl ${resultBg} transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] group`}
+      className={`p-3 sm:p-4 rounded-xl ${resultStyles.bg} transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] group`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Top row - Date & Result Badge */}
@@ -36,8 +41,8 @@ const WarEntry = memo(({ war, index }) => {
           {formatDate(war.endTime)}
         </span>
         <Badge 
-          variant={isWin ? 'success' : isLoss ? 'error' : isDraw ? 'warning' : 'outline'} 
-          className="text-xs uppercase font-bold"
+          variant={resultStyles.badge} 
+          className="text-xs uppercase font-bold tracking-wide"
         >
           {getResultLabel()}
         </Badge>
@@ -72,10 +77,10 @@ const WarEntry = memo(({ war, index }) => {
         <div className="flex flex-col items-center shrink-0 px-2 sm:px-4">
           <div className="flex items-center gap-1 sm:gap-2">
             <div className="flex items-center gap-0.5">
-              <span className={`font-bold text-lg sm:text-xl ${isWin ? 'text-emerald-400' : isLoss ? 'text-red-400' : 'text-white'}`}>
+              <span className={`font-bold text-lg sm:text-xl ${resultStyles.text}`}>
                 {war.clan?.stars || 0}
               </span>
-              <HiStar className="text-yellow-400" size={16} />
+              <HiStar className="text-amber-400" size={16} />
             </div>
             <span className="text-gray-600 text-lg">-</span>
             <div className="flex items-center gap-0.5">
@@ -118,8 +123,8 @@ const WarEntry = memo(({ war, index }) => {
       <div className="mt-3 pt-3 border-t border-gray-700/30 flex justify-between text-xs text-gray-400">
         <div className="flex gap-3 sm:gap-4">
           <span>
-            <span className="text-gray-500">Destruction:</span> 
-            <span className="text-white ml-1">{(war.clan?.destructionPercentage || 0).toFixed(1)}%</span>
+            <span className="text-gray-500">Destruction:</span>{' '}
+            <span className={`font-medium ${resultStyles.accent}`}>{(war.clan?.destructionPercentage || 0).toFixed(1)}%</span>
             <span className="text-gray-600 mx-1">vs</span>
             <span className="text-gray-400">{(war.opponent?.destructionPercentage || 0).toFixed(1)}%</span>
           </span>
