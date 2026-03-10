@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { HiUsers, HiGlobe, HiTrendingUp, HiChevronDown, HiRefresh, HiLocationMarker, HiExternalLink } from 'react-icons/hi';
 import { GiTrophy, GiCastle, GiHammerNails } from 'react-icons/gi';
 import { useRankings } from '../../Store/hooks';
@@ -303,11 +303,23 @@ const RankingSkeleton = () => (
 );
 
 // Main Leaderboards Component
+const VALID_TAB_IDS = ['players', 'clans', 'builderPlayers', 'builderClans', 'capitals'];
+
 const Leaderboards = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('players');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get('tab');
+  const initialTab = tabFromUrl && VALID_TAB_IDS.includes(tabFromUrl) ? tabFromUrl : 'players';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [selectedLocation, setSelectedLocation] = useState(POPULAR_LOCATIONS[0]);
   const [showLocationPicker, setShowLocationPicker] = useState(false);
+
+  // Sync URL tab to state when navigating with ?tab=
+  useEffect(() => {
+    if (tabFromUrl && VALID_TAB_IDS.includes(tabFromUrl) && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
   
   const {
     playerRankings,
@@ -448,7 +460,10 @@ const Leaderboards = () => {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => {
+                    setActiveTab(tab.id);
+                    setSearchParams({ tab: tab.id });
+                  }}
                     className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all whitespace-nowrap ${
                       isActive
                         ? `bg-${tab.color}-500/20 text-${tab.color}-400 border border-${tab.color}-500/30`

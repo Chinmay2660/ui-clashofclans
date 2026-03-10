@@ -1,7 +1,8 @@
 import { useEffect, memo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ErrorState, RefreshButton, BackButton, HeaderActions, PageWrapper } from '../ui';
+import { ErrorState, RefreshButton, BackButton, ShareButton, HeaderActions, PageWrapper, Breadcrumbs } from '../ui';
 import { ClanProfile } from '../shared';
+import { useToast } from '../../context/ToastContext';
 import { WarLog, CurrentWar, CapitalRaids, CurrentCWL } from './';
 import Loader from '../Loader';
 import SEO from '../SEO';
@@ -21,6 +22,12 @@ const ClanDetails = () => {
     clearAllClanData 
   } = useClanWithDetails();
   const lastFetchedTag = useRef(null);
+  const { toast } = useToast();
+
+  const handleCopyLink = () => {
+    const url = window.location.origin + window.location.pathname;
+    navigator.clipboard?.writeText(url).then(() => toast('Link copied to clipboard', 'success')).catch(() => toast('Could not copy link', 'error'));
+  };
 
   useEffect(() => {
     // Only fetch if clanTag changed and not already loading
@@ -70,6 +77,7 @@ const ClanDetails = () => {
     const headerActions = (
       <HeaderActions>
         <BackButton onClick={handleBack} />
+        <ShareButton onClick={handleCopyLink} showLabel={false} />
         <RefreshButton onClick={handleRefresh} loading={isLoading} />
       </HeaderActions>
     );
@@ -82,6 +90,9 @@ const ClanDetails = () => {
           clan={clan}
         />
         <PageWrapper>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+          <Breadcrumbs currentLabel={clan?.name} />
+        </div>
         <ClanProfile 
           clan={clan}
           showHeader={true}

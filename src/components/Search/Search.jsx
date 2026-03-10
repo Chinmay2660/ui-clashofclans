@@ -1,4 +1,4 @@
-import { useState, useCallback, memo, useRef } from 'react';
+import { useState, useCallback, memo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HiSearch, HiUser, HiUsers, HiArrowRight, HiSparkles, HiHashtag, HiViewList, HiLocationMarker, HiStar, HiUserGroup } from 'react-icons/hi';
 import { Card, Button, Badge } from '../ui';
@@ -6,6 +6,7 @@ import { PlayerProfile, ClanProfile } from '../shared';
 import Loader from '../Loader';
 import SEO from '../SEO';
 import { usePlayer, useClan, useSearchMode, useClanSearch } from '../../Store/hooks';
+import { getRecentSearches, addRecentSearch } from '../../utils/recentSearches';
 
 // Assets
 import grandWarden from '../../assets/homeArmy/Grand_Warden.png';
@@ -131,18 +132,13 @@ const ClanSearchResultItem = memo(({ clan, onClick }) => (
   </button>
 ));
 
-// Recent searches (mock data - you can make this dynamic)
-const RECENT_TAGS = [
-  { tag: '29PUGJQ9P', type: 'player', name: 'Example Player' },
-  { tag: '2P9C9U9Y', type: 'clan', name: 'Low Battery Team' },
-];
-
 const Search = () => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState('');
   const [inputError, setInputError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
-  const [searchByName, setSearchByName] = useState(false); // Toggle for clan name search
+  const [searchByName, setSearchByName] = useState(false);
+  const [recentSearches, setRecentSearches] = useState(getRecentSearches);
   const inputRef = useRef(null);
 
   // Redux hooks
@@ -191,6 +187,8 @@ const Search = () => {
 
   const handleClanSelect = useCallback((selectedClan) => {
     const cleanTag = selectedClan.tag.replace('#', '');
+    addRecentSearch(cleanTag, 'clan', selectedClan.name);
+    setRecentSearches(getRecentSearches());
     navigate(`/clan/${cleanTag}`);
   }, [navigate]);
 
@@ -207,7 +205,6 @@ const Search = () => {
     } else {
       setPlayerSearch();
     }
-    
     setHasSearched(true);
     if (type === 'clan') {
       getClan(tag);
@@ -215,6 +212,19 @@ const Search = () => {
       getPlayer(tag);
     }
   }, [setClanSearch, setPlayerSearch, getClan, getPlayer]);
+
+  // Add successful result to recent searches (when we have name)
+  useEffect(() => {
+    if (!hasData || loading) return;
+    if (!searchByName && isClanSearch && clan?.tag) {
+      addRecentSearch(clan.tag, 'clan', clan.name);
+      setRecentSearches(getRecentSearches());
+    }
+    if (!isClanSearch && player?.tag) {
+      addRecentSearch(player.tag, 'player', player.name);
+      setRecentSearches(getRecentSearches());
+    }
+  }, [hasData, loading, searchByName, isClanSearch, clan?.tag, clan?.name, player?.tag, player?.name]);
 
   return (
     <>
@@ -378,12 +388,12 @@ const Search = () => {
             </Button>
           </div>
 
-          {/* Quick search tags */}
-          {RECENT_TAGS.length > 0 && !hasSearched && (
+          {/* Recent searches */}
+          {recentSearches.length > 0 && !hasSearched && (
             <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-800">
-              <p className="text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-2 md:mb-3">Quick Search</p>
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-2 md:mb-3">Recent</p>
               <div className="flex flex-wrap gap-2">
-                {RECENT_TAGS.map((item) => (
+                {recentSearches.map((item) => (
                   <button
                     key={item.tag}
                     onClick={() => handleQuickSearch(item.tag, item.type)}
@@ -394,7 +404,7 @@ const Search = () => {
                     ) : (
                       <HiUser className="text-purple-500" size={14} />
                     )}
-                    <span className="text-gray-400 text-xs md:text-sm">#{item.tag}</span>
+                    <span className="text-gray-400 text-xs md:text-sm truncate max-w-[100px]">{item.name || `#${item.tag}`}</span>
                     <HiArrowRight className="text-gray-600 group-hover:text-gray-400 transition-colors" size={12} />
                   </button>
                 ))}
@@ -420,13 +430,15 @@ const Search = () => {
               <p className="text-gray-400 text-sm md:text-base mb-4 md:mb-6 max-w-md mx-auto px-2">
                 {error?.message || `We couldn't find a ${isClanSearch ? 'clan' : 'player'} with that tag. Double-check and try again.`}
               </p>
-              <Button variant="ghost" onClick={() => {
-                setHasSearched(false);
-                setSearchText('');
-                inputRef.current?.focus();
-              }}>
-                Try Another Search
-              </Button>
+              <div className="flex justify-center">
+                <Button variant="ghost" onClick={() => {
+                  setHasSearched(false);
+                  setSearchText('');
+                  inputRef.current?.focus();
+                }}>
+                  Try Another Search
+                </Button>
+              </div>
             </Card>
           )}
 

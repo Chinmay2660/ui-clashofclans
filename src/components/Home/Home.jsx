@@ -1,9 +1,10 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HiSearch, HiUsers, HiUser, HiLightningBolt, HiStar, HiShieldCheck, HiArrowRight, HiChartBar } from 'react-icons/hi';
+import { HiSearch, HiUsers, HiUser, HiLightningBolt, HiStar, HiShieldCheck, HiArrowRight, HiChartBar, HiTicket } from 'react-icons/hi';
 import { Button, Card, Badge } from '../ui';
-import { useSearchMode } from '../../Store/hooks';
+import { useSearchMode, useGoldPass } from '../../Store/hooks';
 import SEO from '../SEO';
+import { formatDate } from '../../utils';
 
 // Assets
 import wizardImg from '../../assets/backgroundPng/MagicWardenCropped.png';
@@ -141,6 +142,11 @@ const ActionCard = memo(({ type, onClick, image, gradient, accentColor, icon: Ic
 const Home = () => {
   const navigate = useNavigate();
   const { setPlayerSearch, setClanSearch } = useSearchMode();
+  const { goldPass, getGoldPass } = useGoldPass();
+
+  useEffect(() => {
+    getGoldPass();
+  }, [getGoldPass]);
 
   const handlePlayerSearch = useCallback(() => {
     setPlayerSearch();
@@ -314,6 +320,28 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Gold Pass current season */}
+      {goldPass?.endTime && (
+        <section className="relative py-8 md:py-12">
+          <div className="max-w-5xl mx-auto px-4">
+            <Card className="p-4 md:p-6 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+                  <HiTicket className="text-amber-400" size={28} />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="font-display font-bold text-white text-lg md:text-xl">Gold Pass Season</h3>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Current season ends {formatDate(goldPass.endTime)}
+                  </p>
+                </div>
+                <Badge variant="gold">Active</Badge>
+              </div>
+            </Card>
+          </div>
+        </section>
+      )}
 
       {/* ========== HOW IT WORKS SECTION ========== */}
       <section className="relative py-16 md:py-24">

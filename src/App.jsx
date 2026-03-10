@@ -16,6 +16,7 @@ const PlayerDetails = lazy(() => import('./components/Player/PlayerDetails'));
 const ClanDetails = lazy(() => import('./components/Clan/ClanDetails'));
 const Settings = lazy(() => import('./components/Settings/Settings'));
 const Leaderboards = lazy(() => import('./components/Leaderboards/Leaderboards'));
+const NotFound = lazy(() => import('./components/NotFound'));
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
                   <Route path="/player/:playerTag" element={<PlayerDetails />} />
                   <Route path="/clan/:clanTag" element={<ClanDetails />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </ErrorBoundary>

@@ -5,8 +5,8 @@ const isLocalhost = typeof window !== 'undefined' &&
 
 // Use local API when running locally, production otherwise
 const API_BASE_URL = isLocalhost 
-  ? 'http://localhost:8000/api' 
-  : 'https://api-clashofclans.vercel.app/api';
+  ? 'http://localhost:8000/api/v1' 
+  : 'https://api-clashofclans.vercel.app/api/v1';
 
 // ========== PLAYER ENDPOINTS ==========
 export const GET_PLAYER_INFO = `${API_BASE_URL}/players`;

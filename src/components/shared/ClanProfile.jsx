@@ -885,18 +885,66 @@ const ClanLabels = memo(({ labels }) => {
 
 ClanLabels.displayName = 'ClanLabels';
 
-// Member List Component
+// Role order for sorting (leader first, then coLeader, admin, member)
+const ROLE_ORDER = { leader: 0, coLeader: 1, admin: 2, member: 3 };
+
+// Member List Component with sort and filter
 const ClanMemberList = memo(({ members, totalMembers, onMemberClick }) => {
+  const [sortBy, setSortBy] = useState('trophies');
+  const [roleFilter, setRoleFilter] = useState('all');
+
+  const displayedMembers = useMemo(() => {
+    if (!members || members.length === 0) return [];
+    let list = [...members];
+    if (roleFilter !== 'all') {
+      list = list.filter((m) => m.role === roleFilter);
+    }
+    if (sortBy === 'trophies') {
+      list.sort((a, b) => (b.trophies ?? 0) - (a.trophies ?? 0));
+    } else if (sortBy === 'donations') {
+      list.sort((a, b) => (b.donations ?? 0) - (a.donations ?? 0));
+    } else if (sortBy === 'role') {
+      list.sort((a, b) => (ROLE_ORDER[a.role] ?? 4) - (ROLE_ORDER[b.role] ?? 4));
+    }
+    return list;
+  }, [members, sortBy, roleFilter]);
+
   if (!members || members.length === 0) return null;
-  
+
   return (
     <div>
-      <h2 className="text-base md:text-xl font-semibold text-white mb-3 md:mb-4 flex items-center gap-2 flex-wrap">
-        <span className="w-1 h-5 md:h-6 bg-amber-500 rounded-full" />
-        Clan Members ({totalMembers}/50)
-        <span className="text-xs md:text-sm font-normal text-gray-500 ml-1 md:ml-2">Tap to view profile</span>
-      </h2>
-      
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 md:mb-4">
+        <h2 className="text-base md:text-xl font-semibold text-white flex items-center gap-2 flex-wrap">
+          <span className="w-1 h-5 md:h-6 bg-amber-500 rounded-full" />
+          Clan Members ({totalMembers}/50)
+          <span className="text-xs md:text-sm font-normal text-gray-500 ml-1 md:ml-2">Tap to view profile</span>
+        </h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-gray-500">Sort:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="bg-dark-700 border border-gray-600 rounded-lg px-2 py-1.5 text-xs text-white focus:ring-1 focus:ring-amber-500"
+          >
+            <option value="trophies">Trophies</option>
+            <option value="donations">Donations</option>
+            <option value="role">Role</option>
+          </select>
+          <span className="text-xs text-gray-500 ml-1">Role:</span>
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="bg-dark-700 border border-gray-600 rounded-lg px-2 py-1.5 text-xs text-white focus:ring-1 focus:ring-amber-500"
+          >
+            <option value="all">All</option>
+            <option value="leader">Leader</option>
+            <option value="coLeader">Co-Leader</option>
+            <option value="admin">Elder</option>
+            <option value="member">Member</option>
+          </select>
+        </div>
+      </div>
+
       {/* Column Headers - Desktop only */}
       <div className="hidden sm:flex items-center gap-3 px-3 md:px-4 py-2 mb-2 text-[10px] text-gray-500 uppercase tracking-wide border-b border-dark-700">
         <div className="w-8 md:w-10 text-center shrink-0">#</div>
@@ -906,13 +954,13 @@ const ClanMemberList = memo(({ members, totalMembers, onMemberClick }) => {
         <div className="w-[80px] text-right shrink-0 hidden md:block">Donations</div>
         <div className="w-4 shrink-0 hidden md:block"></div>
       </div>
-      
+
       <div className="space-y-3 sm:space-y-2">
-        {members.map((member, index) => (
-          <MemberRow 
-            key={member.tag} 
-            member={member} 
-            index={index} 
+        {displayedMembers.map((member, index) => (
+          <MemberRow
+            key={member.tag}
+            member={member}
+            index={index}
             onClick={() => onMemberClick?.(member)}
           />
         ))}

@@ -4,6 +4,7 @@ import { Card, Button, Badge } from '../ui';
 import SEO from '../SEO';
 import { useUserSettings } from '../../hooks/useUserSettings';
 import { usePlayer, useClan } from '../../Store/hooks';
+import { useToast } from '../../context/ToastContext';
 
 // Tag Input Component
 const TagInput = memo(({ 
@@ -201,6 +202,7 @@ const Settings = () => {
     clearAll,
   } = useUserSettings();
 
+  const { toast } = useToast();
   const { player, loading: playerLoading, getPlayer } = usePlayer();
   const { clan, loading: clanLoading, getClan } = useClan();
 
@@ -231,13 +233,14 @@ const Settings = () => {
         savePlayerTag(cleanTag);
         setIsEditingPlayer(false);
         setPlayerError(null);
+        toast('Player tag saved', 'success');
       }
     } catch (err) {
       setPlayerError('Failed to verify player tag. Please try again.');
     } finally {
       setSavingPlayer(false);
     }
-  }, [getPlayer, savePlayerTag]);
+  }, [getPlayer, savePlayerTag, toast]);
 
   // Verify and save clan tag
   const handleSaveClanTag = useCallback(async (tag) => {
@@ -255,13 +258,14 @@ const Settings = () => {
         saveClanTag(cleanTag);
         setIsEditingClan(false);
         setClanError(null);
+        toast('Clan tag saved', 'success');
       }
     } catch (err) {
       setClanError('Failed to verify clan tag. Please try again.');
     } finally {
       setSavingClan(false);
     }
-  }, [getClan, saveClanTag]);
+  }, [getClan, saveClanTag, toast]);
 
   // Check if current player data matches saved tag
   const playerVerified = player?.tag?.replace('#', '').toUpperCase() === playerTag?.toUpperCase();

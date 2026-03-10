@@ -14,6 +14,7 @@ export { default as Skeleton, PlayerProfileSkeleton, ClanProfileSkeleton, Search
 export { ErrorState } from './ErrorState';
 export { EmptyState } from './EmptyState';
 export { PageWrapper } from './PageWrapper';
+export { default as Breadcrumbs } from './Breadcrumbs';
 
 // Action Buttons
 export { 
