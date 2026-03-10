@@ -9,14 +9,19 @@ A modern React application for tracking Clash of Clans player and clan statistic
 
 ## ✨ Features
 
-- 🔍 **Player Search** - Look up any player by tag and view detailed statistics
+- 🔍 **Player Search** - Look up any player by tag; recent searches saved locally
 - 🏰 **Clan Search** - Explore clan details, members, and war history
-- 👤 **My Profile** - Quick access to your saved player profile
-- 👥 **My Clan** - View your clan's stats and member list
-- 🏆 **Rankings** - Global and regional leaderboards
-- 📊 **Detailed Stats** - Heroes, achievements, war stars, donations, and more
+- 👤 **My Profile** - Quick access to your saved player profile (tag in Settings)
+- 👥 **My Clan** - View your clan's stats and member list (tag in Settings)
+- 🏆 **Rankings** - Global and regional leaderboards with deep-linkable tabs
+- 📊 **Detailed Stats** - Heroes, achievements, war stars, donations; clan member sort/filter
+- 🔗 **Copy Link** - Share player or clan page; toast on copy
+- 🍞 **Breadcrumbs** - On player and clan detail pages
+- 🎫 **Gold Pass** - Current season block on Home
 - 🎨 **Beautiful UI** - Dark theme with CoC-inspired design
 - 📱 **Responsive** - Works on all devices
+- ⚠️ **Error & Offline** - ErrorBoundary and offline fallback with retry
+- 🔔 **Toasts** - Feedback for save, copy, and errors
 
 ## 🛠️ Tech Stack
 
@@ -34,34 +39,31 @@ A modern React application for tracking Clash of Clans player and clan statistic
 src/
 ├── assets/              # Images, icons, and static files
 ├── components/
-│   ├── ui/              # Reusable UI components
-│   │   ├── Button.jsx
-│   │   ├── Card.jsx
-│   │   ├── Badge.jsx
-│   │   ├── Input.jsx
-│   │   ├── Skeleton.jsx  # Loading skeletons
-│   │   └── StatCard.jsx
-│   ├── shared/          # Shared profile components
-│   │   ├── PlayerProfile.jsx
-│   │   └── ClanProfile.jsx
+│   ├── ui/              # Reusable UI (Button, Card, Badge, Input, Skeleton, StatCard, ErrorState, Breadcrumbs)
+│   ├── shared/          # PlayerProfile, ClanProfile
 │   ├── Home/
-│   ├── Search/
-│   ├── Player/
+│   ├── Search/          # Search + recent searches
+│   ├── Player/          # PlayerDetails
+│   ├── Clan/            # ClanDetails, WarLog, CurrentWar, CurrentCWL, CapitalRaids
 │   ├── MyProfile/
-│   ├── MyTeam/
+│   ├── MyClan/
+│   ├── Leaderboards/
+│   ├── Settings/        # Saved player/clan tags, preferences
+│   ├── ErrorBoundary.jsx
+│   ├── OfflineFallback.jsx
+│   ├── NotFound.jsx
 │   └── Loader.jsx
+├── context/
+│   └── ToastContext.jsx # Toasts for copy, save, errors
 ├── Config/
-│   └── Config.jsx       # API endpoints configuration
+│   └── Config.jsx       # API base URL (/api/v1), endpoints
 ├── Store/
-│   ├── slices/          # Redux slices
-│   │   ├── playerSlice.js
-│   │   ├── clanSlice.js
-│   │   ├── uiSlice.js
-│   │   ├── rankingsSlice.js
-│   │   └── leaguesSlice.js
-│   ├── hooks.js         # Custom Redux hooks
-│   └── store.jsx        # Store configuration
-└── main.jsx             # App entry point
+│   ├── slices/
+│   ├── hooks.js
+│   └── store.jsx
+├── utils/
+│   └── recentSearches.js
+└── main.jsx
 ```
 
 ## 🚀 Getting Started
@@ -104,16 +106,14 @@ npm run dev
 
 Edit `src/Config/Config.jsx` to configure:
 
-- API endpoints (local vs production)
-- Your player tag for "My Profile"
-- Your clan tag for "My Clan"
-- Location IDs for rankings
+- **API base URL** – local vs production (uses `/api/v1`).
+- **Player and clan tags** – set in **Settings** (saved in localStorage), not in Config.
 
 ```javascript
 // src/Config/Config.jsx
 const API_BASE_URL = isLocalhost 
-  ? 'http://localhost:8000/api' 
-  : 'https://api-clashofclans.vercel.app/api';
+  ? 'http://localhost:8000/api/v1' 
+  : 'https://api-clashofclans.vercel.app/api/v1';
 ```
 
 ## 🎨 Customization
@@ -128,9 +128,7 @@ The app uses a dark theme with custom colors defined in `tailwind.config.js`:
 
 ### Adding Your Profile
 
-Update the player/clan tags in:
-- `src/components/MyProfile/MyProfile.jsx` - `MY_PLAYER_TAG`
-- `src/components/MyTeam/MyTeam.jsx` - `MY_CLAN_TAG`
+Set your player and clan tags in **Settings** (gear icon in the nav). Values are saved in localStorage and used by My Profile and My Clan.
 
 ## 🔧 Custom Hooks
 
